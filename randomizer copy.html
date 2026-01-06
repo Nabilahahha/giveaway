@@ -1,0 +1,660 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Giveaway Randomizer + Wheel</title>
+  <style>
+    :root {
+      --bg: #0b1220;
+      --card: rgba(255,255,255,0.07);
+      --border: rgba(255,255,255,0.12);
+      --text: rgba(255,255,255,0.92);
+      --muted: rgba(255,255,255,0.70);
+      --good: #22c55e;
+      --bad: #ef4444;
+      --btn: rgba(255,255,255,0.10);
+      --btnHover: rgba(255,255,255,0.16);
+      --shadow: 0 20px 50px rgba(0,0,0,0.35);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      background: radial-gradient(1200px 800px at 20% 10%, #1b2a55 0%, rgba(27,42,85,0) 60%),
+                  radial-gradient(1200px 800px at 80% 30%, #2a1459 0%, rgba(42,20,89,0) 60%),
+                  var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+    }
+    .app {
+      width: min(980px, 100%);
+      display: grid;
+      gap: 16px;
+      grid-template-columns: 1.2fr 0.8fr;
+    }
+    @media (max-width: 900px) {
+      .app { grid-template-columns: 1fr; }
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      padding: 18px;
+    }
+    h1 {
+      font-size: 18px;
+      margin: 0 0 10px 0;
+      letter-spacing: 0.2px;
+    }
+    .sub {
+      margin: 0 0 14px 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.4;
+    }
+    .questionBox {
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+      background: rgba(0,0,0,0.15);
+    }
+    .label {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+    .questionText {
+      font-size: 20px;
+      line-height: 1.25;
+      margin: 0;
+    }
+    .row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+    }
+    button {
+      appearance: none;
+      border: 1px solid var(--border);
+      background: var(--btn);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: 600;
+      letter-spacing: 0.2px;
+      transition: 150ms ease;
+    }
+    button:hover { background: var(--btnHover); transform: translateY(-1px); }
+    button:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+    .btnPrimary { border-color: rgba(255,255,255,0.22); }
+    .btnYes { outline: none; }
+    .btnNo { outline: none; }
+    .status {
+      margin-top: 12px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: rgba(0,0,0,0.15);
+      font-size: 14px;
+      color: var(--muted);
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .pill {
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.06);
+      color: var(--muted);
+      white-space: nowrap;
+    }
+    .pill.good { border-color: rgba(34,197,94,0.5); color: rgba(34,197,94,0.95); }
+    .pill.bad { border-color: rgba(239,68,68,0.5); color: rgba(239,68,68,0.95); }
+
+    /* Wheel */
+    .wheelWrap {
+      display: grid;
+      place-items: center;
+      gap: 12px;
+    }
+    canvas {
+      width: 100%;
+      max-width: 360px;
+      aspect-ratio: 1 / 1;
+      border-radius: 999px;
+      background: rgba(0,0,0,0.15);
+      border: 1px solid var(--border);
+    }
+    .pointer {
+      width: 0;
+      height: 0;
+      border-left: 14px solid transparent;
+      border-right: 14px solid transparent;
+      border-bottom: 20px solid rgba(255,255,255,0.90);
+      filter: drop-shadow(0 10px 20px rgba(0,0,0,0.45));
+      margin-bottom: -6px;
+    }
+    .giftResult {
+      width: 100%;
+      border: 1px solid var(--border);
+      background: rgba(0,0,0,0.15);
+      border-radius: 14px;
+      padding: 12px;
+      text-align: center;
+    }
+    .giftTitle {
+      margin: 0;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .giftName {
+      margin: 6px 0 0 0;
+      font-size: 18px;
+      font-weight: 800;
+    }
+
+    /* Modal */
+    .modalBackdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.55);
+      display: none;
+      place-items: center;
+      padding: 20px;
+    }
+    .modalBackdrop.show { display: grid; }
+    .modal {
+      width: min(520px, 100%);
+      background: rgba(10,15,28,0.92);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      padding: 16px;
+    }
+    .modal h2 {
+      margin: 0 0 8px 0;
+      font-size: 16px;
+    }
+    .modal p {
+      margin: 0 0 14px 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+    .footerNote {
+      margin-top: 10px;
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+    .mono {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 12px;
+      color: rgba(255,255,255,0.75);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app">
+    <!-- LEFT: Question flow -->
+    <section class="card">
+      <h1>Question Randomizer</h1>
+      <p class="sub">
+        Click “Pick Random Question”, then answer Yes/No. After feedback, proceed to the gift wheel.
+      </p>
+
+      <div class="questionBox">
+        <div class="label">Current Question</div>
+        <p class="questionText" id="questionText">Click “Pick Random Question” to start.</p>
+      </div>
+
+      <div class="row">
+        <button class="btnPrimary" id="btnPick">Pick Random Question</button>
+        <button id="btnYes" class="btnYes" disabled>Yes</button>
+        <button id="btnNo" class="btnNo" disabled>No</button>
+      </div>
+
+      <div class="status">
+        <div id="statusText">Waiting…</div>
+        <div class="pill" id="stepPill">Step: Question</div>
+      </div>
+
+      <div class="row">
+        <button id="btnToWheel" disabled>Proceed to Wheel</button>
+        <button id="btnRestart" disabled>Restart (Next Participant)</button>
+      </div>
+
+      <div class="footerNote">
+        Admin note: edit the question pool and gift list inside the <span class="mono">QUESTIONS</span> and <span class="mono">GIFTS</span> arrays in the code.
+      </div>
+    </section>
+
+    <!-- RIGHT: Wheel -->
+    <section class="card">
+      <h1>Wheel of Fortune</h1>
+      <p class="sub">
+        Wheel becomes available after answering the question.
+      </p>
+
+      <div class="wheelWrap">
+        <div class="pointer" aria-hidden="true"></div>
+        <canvas id="wheel" width="800" height="800"></canvas>
+
+        <div class="row" style="justify-content:center;">
+          <button id="btnSpin" disabled>Spin Wheel</button>
+        </div>
+
+        <div class="giftResult">
+          <p class="giftTitle">Gift Result</p>
+          <p class="giftName" id="giftName">—</p>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Modal -->
+  <div class="modalBackdrop" id="modalBackdrop" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal">
+      <h2 id="modalTitle">Result</h2>
+      <p id="modalBody">—</p>
+      <div class="row" style="justify-content:flex-end;">
+        <button id="btnModalOk" class="btnPrimary">OK</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+/**
+ * CONFIG: Edit these arrays.
+ * For each question: text + correct answer (true for Yes, false for No)
+ */
+const QUESTIONS = [
+  { text: "Maybank Asset Management is a fund house (asset management company).", correctYes: true },
+  { text: "Inflation always benefits bond prices.", correctYes: false },
+  { text: "A higher interest rate generally makes borrowing more expensive.", correctYes: true },
+  { text: "A diversified portfolio can eliminate all investment risk.", correctYes: false },
+  { text: "Equities are typically considered higher volatility than investment-grade bonds.", correctYes: true },
+  { text: "GDP measures the total value of goods and services produced in an economy.", correctYes: true },
+  { text: "A stronger currency always improves a country's export competitiveness.", correctYes: false },
+  { text: "A recession is commonly defined as two consecutive quarters of negative real GDP growth.", correctYes: true },
+  { text: "Higher bond yields imply lower bond prices (all else equal).", correctYes: true },
+  { text: "The Fed controls fiscal policy.", correctYes: false },
+  // Add up to 30–40 easily:
+  { text: "A stock split changes the company’s market capitalization immediately.", correctYes: false },
+  { text: "Liquidity refers to how quickly an asset can be converted to cash without large price impact.", correctYes: true },
+  { text: "A higher P/E ratio can indicate higher expected growth, but not always.", correctYes: true },
+  { text: "Credit risk is the risk that an issuer fails to make promised payments.", correctYes: true },
+  { text: "Duration is a measure related to a bond’s sensitivity to interest rate changes.", correctYes: true },
+  { text: "A 'bull market' means prices are falling sharply.", correctYes: false },
+  { text: "Compounding means earning returns on both principal and prior returns.", correctYes: true },
+  { text: "A balanced fund typically holds both equities and fixed income.", correctYes: true },
+  { text: "A higher dividend yield always means a safer stock.", correctYes: false },
+  { text: "Volatility is a measure of return variability.", correctYes: true },
+];
+
+const GIFTS = [
+  { name: "RM5 Voucher" },
+  { name: "RM10 Voucher" },
+  { name: "Mystery Gift" },
+  { name: "Coffee Treat" },
+  { name: "Skincare Sample" },
+  { name: "Cute Sticker Pack" },
+  { name: "Keychain" },
+  { name: "Grand Prize Entry" }
+];
+
+/**
+ * Optional: weighted gifts (uncomment to use).
+ * If you use weights, total probability is proportional to weight.
+ */
+// const GIFTS = [
+//   { name: "RM5 Voucher", weight: 40 },
+//   { name: "RM10 Voucher", weight: 25 },
+//   { name: "Mystery Gift", weight: 10 },
+//   { name: "Coffee Treat", weight: 10 },
+//   { name: "Keychain", weight: 10 },
+//   { name: "Grand Prize Entry", weight: 5 }
+// ];
+
+const el = (id) => document.getElementById(id);
+
+const state = {
+  currentQuestion: null,
+  answered: false,
+  answerWasCorrect: null,
+  wheelReady: false,
+  spinning: false,
+  // If you want “no repeats until all used”, keep a shuffled queue:
+  questionQueue: [],
+  rotation: 0, // current wheel rotation (radians)
+};
+
+const ui = {
+  questionText: el("questionText"),
+  statusText: el("statusText"),
+  stepPill: el("stepPill"),
+  btnPick: el("btnPick"),
+  btnYes: el("btnYes"),
+  btnNo: el("btnNo"),
+  btnToWheel: el("btnToWheel"),
+  btnRestart: el("btnRestart"),
+  btnSpin: el("btnSpin"),
+  giftName: el("giftName"),
+  wheel: el("wheel"),
+  modalBackdrop: el("modalBackdrop"),
+  modalTitle: el("modalTitle"),
+  modalBody: el("modalBody"),
+  btnModalOk: el("btnModalOk"),
+};
+
+const ctx = ui.wheel.getContext("2d");
+
+/* ---------- Utilities ---------- */
+
+function shuffle(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function buildQuestionQueue() {
+  state.questionQueue = shuffle(QUESTIONS.map((q, idx) => idx));
+}
+
+function pickNextQuestionNoRepeat() {
+  if (state.questionQueue.length === 0) buildQuestionQueue();
+  const idx = state.questionQueue.pop();
+  return QUESTIONS[idx];
+}
+
+function showModal(title, body) {
+  ui.modalTitle.textContent = title;
+  ui.modalBody.textContent = body;
+  ui.modalBackdrop.classList.add("show");
+}
+
+function hideModal() {
+  ui.modalBackdrop.classList.remove("show");
+}
+
+/* ---------- Question Flow ---------- */
+
+function resetForNewParticipant() {
+  state.currentQuestion = null;
+  state.answered = false;
+  state.answerWasCorrect = null;
+  state.wheelReady = false;
+  state.spinning = false;
+
+  ui.questionText.textContent = "Click “Pick Random Question” to start.";
+  ui.statusText.textContent = "Waiting…";
+  ui.stepPill.textContent = "Step: Question";
+  ui.stepPill.className = "pill";
+
+  ui.btnYes.disabled = true;
+  ui.btnNo.disabled = true;
+  ui.btnToWheel.disabled = true;
+  ui.btnRestart.disabled = true;
+  ui.btnSpin.disabled = true;
+
+  ui.giftName.textContent = "—";
+
+  // Reset wheel rotation
+  state.rotation = 0;
+  drawWheel(state.rotation);
+}
+
+function onPickQuestion() {
+  state.currentQuestion = pickNextQuestionNoRepeat();
+  state.answered = false;
+  state.answerWasCorrect = null;
+  state.wheelReady = false;
+
+  ui.questionText.textContent = state.currentQuestion.text;
+  ui.statusText.textContent = "Answer with Yes/No.";
+  ui.stepPill.textContent = "Step: Question";
+  ui.stepPill.className = "pill";
+
+  ui.btnYes.disabled = false;
+  ui.btnNo.disabled = false;
+  ui.btnToWheel.disabled = true;
+  ui.btnRestart.disabled = true;
+  ui.btnSpin.disabled = true;
+  ui.giftName.textContent = "—";
+}
+
+function onAnswer(userYes) {
+  if (!state.currentQuestion || state.answered) return;
+
+  state.answered = true;
+  const correct = (userYes === state.currentQuestion.correctYes);
+  state.answerWasCorrect = correct;
+
+  ui.btnYes.disabled = true;
+  ui.btnNo.disabled = true;
+
+  if (correct) {
+    ui.statusText.textContent = "Correct. Proceed to the wheel.";
+    ui.stepPill.textContent = "Correct";
+    ui.stepPill.className = "pill good";
+    showModal("Correct", "Nice. You can proceed to the wheel to reveal the gift.");
+  } else {
+    ui.statusText.textContent = "Wrong. Proceed to the wheel anyway.";
+    ui.stepPill.textContent = "Wrong";
+    ui.stepPill.className = "pill bad";
+    showModal("Wrong", "No problem. You can still proceed to the wheel to reveal the gift.");
+  }
+
+  state.wheelReady = true;
+  ui.btnToWheel.disabled = false;
+  ui.btnRestart.disabled = false;
+}
+
+/* ---------- Wheel ---------- */
+
+function getGiftSliceCount() {
+  return GIFTS.length;
+}
+
+function drawWheel(rotationRad) {
+  const w = ui.wheel.width;
+  const h = ui.wheel.height;
+  const cx = w / 2;
+  const cy = h / 2;
+  const radius = Math.min(w, h) * 0.44;
+
+  ctx.clearRect(0, 0, w, h);
+
+  // Base
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.rotate(rotationRad);
+
+  const n = getGiftSliceCount();
+  const slice = (Math.PI * 2) / n;
+
+  for (let i = 0; i < n; i++) {
+    const start = i * slice;
+    const end = start + slice;
+
+    // Alternating light/dark for clarity (no fixed colors requested—using grayscale)
+    const shade = (i % 2 === 0) ? "rgba(255,255,255,0.18)" : "rgba(0,0,0,0.18)";
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.arc(0, 0, radius, start, end);
+    ctx.closePath();
+    ctx.fillStyle = shade;
+    ctx.fill();
+
+    ctx.strokeStyle = "rgba(255,255,255,0.20)";
+    ctx.lineWidth = 3;
+    ctx.stroke();
+
+    // Text
+    const label = GIFTS[i].name;
+    ctx.save();
+    ctx.rotate(start + slice / 2);
+    ctx.textAlign = "right";
+    ctx.fillStyle = "rgba(255,255,255,0.90)";
+    ctx.font = "bold 26px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial";
+    ctx.fillText(label, radius - 18, 10);
+    ctx.restore();
+  }
+
+  // Center circle
+  ctx.beginPath();
+  ctx.arc(0, 0, radius * 0.18, 0, Math.PI * 2);
+  ctx.fillStyle = "rgba(255,255,255,0.10)";
+  ctx.fill();
+  ctx.strokeStyle = "rgba(255,255,255,0.20)";
+  ctx.lineWidth = 4;
+  ctx.stroke();
+
+  ctx.restore();
+}
+
+function angleToIndex(angleRad) {
+  // Pointer is at top (12 o'clock). Our canvas rotation means:
+  // Determine which slice is under the pointer by mapping angle.
+  const n = getGiftSliceCount();
+  const slice = (Math.PI * 2) / n;
+
+  // Normalize angle to [0, 2π)
+  let a = angleRad % (Math.PI * 2);
+  if (a < 0) a += Math.PI * 2;
+
+  // Pointer at -π/2 in standard unit circle; but our drawing starts at 0 on x-axis.
+  // We want the slice that aligns with top, so shift by π/2.
+  const shifted = (a + Math.PI / 2) % (Math.PI * 2);
+
+  // Because rotation rotates wheel, the slice at pointer corresponds to:
+  const idx = Math.floor((Math.PI * 2 - shifted) / slice) % n;
+  return idx;
+}
+
+function pickWeightedGiftIndex() {
+  // If no weights, fallback to uniform.
+  if (!GIFTS.some(g => typeof g.weight === "number")) {
+    return Math.floor(Math.random() * GIFTS.length);
+  }
+
+  const weights = GIFTS.map(g => Math.max(0, Number(g.weight || 0)));
+  const total = weights.reduce((a,b) => a + b, 0);
+  if (total <= 0) return Math.floor(Math.random() * GIFTS.length);
+
+  let r = Math.random() * total;
+  for (let i = 0; i < weights.length; i++) {
+    r -= weights[i];
+    if (r <= 0) return i;
+  }
+  return weights.length - 1;
+}
+
+function spinToGiftIndex(targetIdx) {
+  const n = getGiftSliceCount();
+  const slice = (Math.PI * 2) / n;
+
+  // We want target slice to land under pointer at end.
+  // Determine what final rotation should be.
+  // Compute the center angle of the target slice in wheel coordinates.
+  const targetCenter = (targetIdx + 0.5) * slice; // from 0 rad at +x axis
+  // Pointer is at top => angle = -π/2. We need wheel rotation so that targetCenter maps to top.
+  // If wheel is rotated by R, then targetCenter + R = -π/2 (mod 2π) => R = -π/2 - targetCenter
+  const desired = (-Math.PI / 2) - targetCenter;
+
+  // Add multiple full spins + some random micro offset so it feels natural but still lands correctly.
+  const extraSpins = 6 + Math.floor(Math.random() * 3); // 6–8 spins
+  const final = desired - extraSpins * Math.PI * 2;
+
+  animateSpin(state.rotation, final, 4200);
+}
+
+function easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }
+
+function animateSpin(from, to, durationMs) {
+  state.spinning = true;
+  ui.btnSpin.disabled = true;
+
+  const start = performance.now();
+
+  function frame(now) {
+    const t = Math.min(1, (now - start) / durationMs);
+    const eased = easeOutCubic(t);
+    const current = from + (to - from) * eased;
+
+    state.rotation = current;
+    drawWheel(current);
+
+    if (t < 1) {
+      requestAnimationFrame(frame);
+    } else {
+      state.spinning = false;
+
+      // Determine final gift index based on actual rotation
+      const idx = angleToIndex(state.rotation);
+      ui.giftName.textContent = GIFTS[idx].name;
+
+      showModal("Gift Revealed", `Congratulations. You won: ${GIFTS[idx].name}`);
+
+      // Allow restart (already allowed), keep spin disabled until next run
+      ui.btnRestart.disabled = false;
+    }
+  }
+
+  requestAnimationFrame(frame);
+}
+
+/* ---------- UI Wiring ---------- */
+
+ui.btnPick.addEventListener("click", onPickQuestion);
+
+ui.btnYes.addEventListener("click", () => onAnswer(true));
+ui.btnNo.addEventListener("click", () => onAnswer(false));
+
+ui.btnToWheel.addEventListener("click", () => {
+  if (!state.wheelReady) return;
+  ui.statusText.textContent = "Wheel is ready. Click Spin.";
+  ui.stepPill.textContent = "Step: Wheel";
+  ui.stepPill.className = "pill";
+  ui.btnSpin.disabled = false;
+  ui.btnToWheel.disabled = true;
+});
+
+ui.btnSpin.addEventListener("click", () => {
+  if (!state.wheelReady || state.spinning) return;
+  // Pick target gift
+  const targetIdx = pickWeightedGiftIndex();
+  spinToGiftIndex(targetIdx);
+});
+
+ui.btnRestart.addEventListener("click", () => {
+  resetForNewParticipant();
+});
+
+ui.btnModalOk.addEventListener("click", hideModal);
+ui.modalBackdrop.addEventListener("click", (e) => {
+  if (e.target === ui.modalBackdrop) hideModal();
+});
+
+/* ---------- Init ---------- */
+buildQuestionQueue();
+drawWheel(0);
+resetForNewParticipant();
+</script>
+</body>
+</html>
