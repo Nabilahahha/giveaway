@@ -75,6 +75,21 @@
       justify-content:flex-start;
       gap: 12px;
     }
+.qTopRow{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.qCounter{
+  font-size: 12px;
+  font-weight: 800;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.25);
+  color: rgba(255,255,255,0.9);
+}
     .qLabel{ font-size: 12px; color: rgba(255,255,255,0.6); font-weight: 600; text-transform: capitalize; }
     .qText{ margin:0; font-size: 24px; color: #ffffff; }
     .btnRow{ display:grid; grid-template-columns: 1.5fr 1fr 1fr; gap: 16px; margin-top: 24px; }
@@ -125,9 +140,12 @@
       <h1 class="title">Question Randomizer</h1>
       <p class="sub">Press <b>Yes</b> if the statement is TRUE. Press <b>No</b> if it is FALSE.</p>
       <div class="qPanel">
-        <div class="qLabel">Current Question</div>
-        <p class="qText" id="questionText">Click 'Pick Random Question' to start.</p>
-      </div>
+  <div class="qTopRow">
+    <div class="qLabel">Current Question</div>
+    <div class="qCounter" id="qCounter">Q 0/45</div>
+  </div>
+  <p class="qText" id="questionText">Click 'Pick Random Question' to start.</p>
+</div>
       <div class="btnRow">
         <button class="btnPick" id="btnPick">Pick Random Question</button>
         <button class="btnYes" id="btnYes" disabled>Yes</button>
@@ -181,6 +199,7 @@ const GIFTS = [
 const el = (id) => document.getElementById(id);
 const ui = {
   questionText: el("questionText"),
+  qCounter: el("qCounter"),
   btnPick: el("btnPick"),
   btnYes: el("btnYes"),
   btnNo: el("btnNo"),
@@ -193,6 +212,14 @@ const ui = {
   modalBody: el("modalBody"),
   btnModalOk: el("btnModalOk")
 };
+
+function scrollToWheel(){
+  document.getElementById("wheel").scrollIntoView({ behavior: "smooth", block: "center" });
+}
+
+function scrollToQuestion(){
+  document.getElementById("questionText").scrollIntoView({ behavior: "smooth", block: "center" });
+}
 
 const ctx = ui.wheel.getContext("2d");
 let state = { currentQuestion: null, answered: false, wheelEnabled: false, spinning: false, rotation: 0 };
@@ -242,6 +269,7 @@ function handleAnswer(isYes) {
   const correct = isYes === state.currentQuestion.correctYes;
   ui.btnYes.disabled = ui.btnNo.disabled = true;
   ui.btnSpin.disabled = false;
+  setTimeout(scrollToWheel, 150);
   state.wheelEnabled = true;
   correct ? showModal("Correct! 🎉", "Now spin the wheel!") : showModal("Oops! 😊", "Don't worry, you can still spin!");
 }
@@ -279,7 +307,10 @@ ui.btnSpin.onclick = () => {
   requestAnimationFrame(animate);
 };
 
-ui.btnReset.onclick = () => location.reload();
+ui.btnReset.onclick = () => {
+  location.reload();
+  setTimeout(scrollToQuestion, 150);
+};
 ui.btnModalOk.onclick = () => ui.modalBackdrop.classList.remove("show");
 
 drawWheel(0);
