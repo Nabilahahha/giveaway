@@ -17,303 +17,652 @@
       --accent: #0f172a;
       --yes: #10b981;
       --no: #ef4444;
-      --btn: #f8fafc;
-      --btnHover:#f1f5f9;
     }
-    *{ box-sizing:border-box; margin:0; padding:0; }
+
+    *{ box-sizing:border-box; }
+    html, body{ height:100%; }
     body{
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: linear-gradient(180deg, #fafaf9 0%, #f5f5f4 100%);
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      background: radial-gradient(1200px 600px at 20% 0%, rgba(255,198,41,0.25), transparent 55%),
+                  radial-gradient(900px 600px at 80% 10%, rgba(15,23,42,0.08), transparent 55%),
+                  #f6f6f4;
       color: var(--ink);
-      min-height:100vh;
-      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      user-select: none;
+      -webkit-user-select: none;
     }
-    .header{
-      background: var(--maybank);
-      border-bottom: 2px solid var(--maybank-dark);
-      box-shadow: 0 4px 20px rgba(255,198,41,0.15);
+    button, input, textarea{ user-select:none; -webkit-user-select:none; }
+    .topbar{
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: linear-gradient(180deg, rgba(255,198,41,0.95), rgba(255,198,41,0.88));
+      border-bottom: 1px solid rgba(15,23,42,0.10);
+      box-shadow: 0 10px 30px rgba(15,23,42,0.08);
     }
-    .headerInner{
-      width:min(1200px, 100%);
-      margin:0 auto;
-      padding: 20px 24px;
+    .topbarInner{
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 18px 22px;
       display:flex;
       align-items:center;
-      gap:20px;
+      gap: 14px;
     }
-    .logo{ height: 56px; width: auto; display:block; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1)); }
-    .headerTitle{ font-weight: 800; font-size: 28px; letter-spacing: -0.5px; line-height: 1.2; color: var(--accent); }
-    .headerTitle small{ display:block; font-weight:600; font-size: 14px; margin-top: 4px; opacity:0.75; }
+    .brandLogo{
+      height: 44px;
+      width: auto;
+      display:block;
+    }
+
     .wrap{
-      width:min(1200px, 100%);
-      margin: 32px auto 48px auto;
-      padding: 0 24px;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 26px 18px 40px;
       display:grid;
-      grid-template-columns: 1.3fr 1fr;
-      gap: 28px;
-      align-items:start;
+      grid-template-columns: 1.25fr 1fr;
+      gap: 22px;
     }
-    @media (max-width: 1000px){ .wrap{ grid-template-columns: 1fr; } .logo{ height: 48px; } }
+
+    @media (max-width: 980px){
+      .wrap{ grid-template-columns: 1fr; }
+    }
+
     .card{
-      background: var(--card);
+      background: rgba(255,255,255,0.72);
       border: 1px solid var(--border);
-      border-radius: 24px;
+      border-radius: 26px;
       box-shadow: var(--shadow);
-      padding: 32px;
-      transition: box-shadow 0.3s ease;
+      padding: 26px;
+      backdrop-filter: blur(10px);
     }
-    .title{ margin: 0 0 12px 0; font-size: 32px; font-weight: 800; letter-spacing: -0.8px; color: var(--accent); }
-    .sub{ margin: 0 0 24px 0; color: var(--muted); font-size: 15px; }
+
+    .title{
+      font-size: 40px;
+      line-height: 1.05;
+      margin: 0 0 10px;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+    }
+    .sub{
+      margin: 0 0 22px;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    /* Question panel */
     .qPanel{
-      background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-      border: 2px solid rgba(15,23,42,0.3);
       border-radius: 20px;
-      padding: 24px 28px;
-      min-height: 240px;
+      overflow: hidden;
+      border: 2px solid rgba(15,23,42,0.12);
+      background: #ffffff;
+      padding: 0;
+      min-height: 320px;
       display:flex;
       flex-direction: column;
-      justify-content:flex-start;
+    }
+
+    /* Yellow header strip for question */
+    .qHeaderBar{
+      background: var(--maybank);
+      border-bottom: 2px solid rgba(15,23,42,0.10);
+      padding: 14px 18px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
       gap: 12px;
     }
-.qTopRow{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-}
 
-.qCounter{
-  font-size: 12px;
-  font-weight: 800;
-  padding: 6px 10px;
-  border-radius: 999px;
-  background: rgba(255,255,255,0.15);
-  border: 1px solid rgba(255,255,255,0.25);
-  color: rgba(255,255,255,0.9);
+    .qLabel{
+      color: #111827;
+      font-weight: 900;
+      font-size: 18px;
+      opacity: 1;
+      text-transform: none;
+    }
+
+    .qCounter{
+      font-size: 13px;
+      font-weight: 900;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: rgba(17,24,39,0.55);
+      border: 1px solid rgba(255,255,255,0.25);
+      color: rgba(255,255,255,0.95);
+      white-space: nowrap;
+    }
+
+    .qBodyBox{
+      min-height: 220px;
+      background: #F2F4F7;
+      padding: 24px 24px;
+      flex: 1;
+    }
+
+    .qText{
+      margin:0;
+      font-size: 28px;
+      font-weight: 900;
+      line-height: 1.25;
+      color: #111827;
+    }
+
+    .btnRow{
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr; /* 1 line */
+  gap: 16px;
+  margin-top: 18px;
+  align-items: stretch;
 }
-    .qLabel{ font-size: 12px; color: rgba(255,255,255,0.6); font-weight: 600; text-transform: capitalize; }
-    .qText{ margin:0; font-size: 24px; color: #ffffff; }
-    .btnRow{ display:grid; grid-template-columns: 1.5fr 1fr 1fr; gap: 16px; margin-top: 24px; }
-    @media (max-width: 680px){ .btnRow{ grid-template-columns: 1fr; } }
-    button{
-      appearance:none; border: 2px solid transparent; background: var(--btn); color: var(--ink);
-      padding: 18px 24px; border-radius: 14px; cursor:pointer; font-weight: 700; font-size: 17px;
-      transition: all 0.2s ease; font-family: inherit;
+@media (max-width: 700px){
+  .btnRow{ grid-template-columns: 1fr; } /* stack on small phones */
+}
+    .btn{
+      border: 1px solid rgba(15,23,42,0.10);
+      border-radius: 16px;
+      padding: 16px 18px;
+      font-size: 18px;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 0 10px 25px rgba(15,23,42,0.08);
+      transition: transform .08s ease, opacity .15s ease, filter .15s ease;
+      min-width: 0;
+      width: 100%;
     }
-    button:hover{ transform: translateY(-2px); box-shadow: 0 8px 20px rgba(15,23,42,0.12); }
-    button:disabled{ opacity: 0.4; cursor:not-allowed; transform:none; }
-    .btnPick{ background: var(--maybank); color: var(--accent); font-weight: 800; }
-    .btnYes{ background: var(--yes); color: #fff; }
-    .btnNo{ background: var(--no); color: #fff; }
-    .wheelWrap{ display:flex; flex-direction: column; align-items: center; gap: 20px; }
+    .btn:active{ transform: translateY(1px); }
+    .btn:disabled{
+      opacity: .55;
+      cursor: not-allowed;
+      filter: grayscale(0.2);
+    }
+    .btnPick{
+      background: var(--maybank);
+      color: #111827;
+    }
+    .btnYes{
+      background: color-mix(in srgb, var(--yes) 25%, white 75%);
+      color: #ffffff;
+      border-color: rgba(16,185,129,0.35);
+      background: #10b981;
+    }
+    .btnNo{
+      background: #ef4444;
+      color: #ffffff;
+      border-color: rgba(239,68,68,0.35);
+    }
+
+    /* Wheel area */
+    .wheelWrap{
+      display:flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+    }
+    #wheel{
+      width: 460px;
+      height: 460px;
+      max-width: 100%;
+      border-radius: 50%;
+      background: transparent;
+    }
     .pointer{
-      width: 0; height: 0; border-left: 18px solid transparent; border-right: 18px solid transparent;
-      border-top: 28px solid var(--accent); z-index: 10; margin-bottom: -15px;
+      width: 0;
+      height: 0;
+      border-left: 18px solid transparent;
+      border-right: 18px solid transparent;
+      border-top: 28px solid #0f172a;   
+      margin-bottom: -10px;
+}
+    .btnSpin{
+  width: min(520px, 100%);           
+  background: var(--maybank);        
+  color: #111827;
+  border-radius: 16px;
+  padding: 16px 18px;              
+  font-size: 18px;
+  font-weight: 900;
+  border: 1px solid rgba(15,23,42,0.12);
+  cursor: pointer;
+  box-shadow: 0 10px 25px rgba(15,23,42,0.10);
+  transition: transform .08s ease, opacity .15s ease;
+}
+.btnSpin:disabled{ opacity: .55; cursor: not-allowed; }
+    .resultBox{
+      width: min(460px, 100%);
+      background: rgba(255,255,255,0.8);
+      border: 2px solid rgba(15,23,42,0.10);
+      border-radius: 18px;
+      padding: 18px 16px;
+      text-align:center;
+      box-shadow: 0 10px 25px rgba(15,23,42,0.08);
     }
-    canvas{ width: 100%; max-width: 380px; aspect-ratio: 1 / 1; border-radius: 999px; border: 4px solid var(--accent); }
-    .spinBtn{ background: var(--accent); color: #fff; width: 100%; max-width: 280px; }
-    .giftResult{ width: 100%; max-width: 320px; border: 2px solid var(--border); background: #f8fafc; border-radius: 16px; padding: 20px; text-align:center; }
-    .giftLabel{ font-size: 12px; color: var(--muted); font-weight: 700; text-transform: uppercase; }
-    .giftName{ font-size: 24px; font-weight: 800; color: var(--accent); }
-    
+    .resultLabel{
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: 0.06em;
+      color: rgba(15,23,42,0.55);
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+    .resultValue{
+      font-size: 24px;
+      font-weight: 1000;
+      color: #0f172a;
+      min-height: 30px;
+    }
+    .resetBtn{
+      margin-top: 10px;
+      background: transparent;
+      border: none;
+      color: #0f172a;
+      font-weight: 900;
+      cursor:pointer;
+      padding: 10px 8px;
+    }
+    .resetBtn:hover{ text-decoration: underline; }
+
     /* Modal */
-    .modalBackdrop{ position: fixed; inset: 0; background: rgba(15,23,42,0.75); backdrop-filter: blur(4px); display:none; place-items:center; padding: 24px; z-index: 100; }
-    .modalBackdrop.show{ display:grid; }
-    .modalCard{ width: min(500px, 100%); background: white; border-radius: 28px; padding: 40px; text-align:center; }
-    .modalTitle{ font-size: 32px; font-weight: 900; margin-bottom: 15px; }
-    .modalBody{ font-size: 18px; margin-bottom: 25px; }
-    .modalOk{ background: var(--accent); color: white; padding: 12px 40px; border-radius: 10px; }
+    .modalBackdrop{
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.45);
+      display:none;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      z-index: 50;
+    }
+    .modal{
+      width: min(560px, 100%);
+      background: #ffffff;
+      border-radius: 22px;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.25);
+      border: 1px solid rgba(15,23,42,0.15);
+      overflow:hidden;
+    }
+    .modalHead{
+      background: var(--maybank);
+      padding: 14px 18px;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      font-weight: 1000;
+      color:#111827;
+      font-size: 20px;
+    }
+    .modalBody{
+      padding: 18px 20px 10px;
+      color:#111827;
+      font-weight: 700;
+      line-height: 1.35;
+    }
+    .modalFoot{
+      padding: 12px 18px 18px;
+      display:flex;
+      justify-content:center;
+    }
+    .modalBtn{
+      background: #0f172a;
+      color: #ffffff;
+      border: 1px solid rgba(15,23,42,0.2);
+      border-radius: 14px;
+      padding: 12px 16px;
+      font-weight: 900;
+      cursor:pointer;
+      min-width: 120px;
+    }
   </style>
 </head>
 <body>
-  <header class="header">
-  <div class="headerInner">
-    <img 
-      src="maybank-logo.png" 
-      alt="Maybank Asset Management" 
-      class="logo"
-    />
-  </div>
-</header>
+  <header class="topbar">
+    <div class="topbarInner">
+      <img class="brandLogo" src="maybank-logo.png" alt="Maybank Asset Management">
+    </div>
+  </header>
 
   <main class="wrap">
-    <section class="card">
+    <section class="card" id="questionCard">
       <h1 class="title">Question Randomizer</h1>
       <p class="sub">Press <b>Yes</b> if the statement is TRUE. Press <b>No</b> if it is FALSE.</p>
+
       <div class="qPanel">
-  <div class="qTopRow">
-    <div class="qLabel">Current Question</div>
-    <div class="qCounter" id="qCounter">Q 0/45</div>
-  </div>
-  <p class="qText" id="questionText">Click 'Pick Random Question' to start.</p>
-</div>
+        <div class="qHeaderBar">
+          <div class="qLabel">Current Question</div>
+          <div class="qCounter" id="qCounter">Q 0/45</div>
+        </div>
+        <div class="qBodyBox">
+          <p class="qText" id="questionText">Click 'Pick Random Question' to start.</p>
+        </div>
+      </div>
+
       <div class="btnRow">
-        <button class="btnPick" id="btnPick">Pick Random Question</button>
-        <button class="btnYes" id="btnYes" disabled>Yes</button>
-        <button class="btnNo" id="btnNo" disabled>No</button>
+        <button class="btn btnPick" id="btnPick">Pick Random Question</button>
+        <button class="btn btnYes" id="btnYes" disabled>Yes</button>
+        <button class="btn btnNo" id="btnNo" disabled>No</button>
       </div>
     </section>
 
-    <section class="card">
+    <section class="card" id="wheelCard">
+      <h1 class="title" style="font-size:34px;margin-bottom:6px;">Wheel of Fortune</h1>
+      <p class="sub" style="margin-bottom:16px;">Spin becomes available only after answering the question.</p>
+
       <div class="wheelWrap">
         <div class="pointer"></div>
-        <canvas id="wheel" width="800" height="800"></canvas>
-        <button class="spinBtn" id="btnSpin" disabled>Spin Wheel</button>
-        <div class="giftResult">
-          <p class="giftLabel">Gift Result</p>
-          <p class="giftName" id="giftName">—</p>
+        <canvas id="wheel" width="700" height="700" aria-label="Wheel of Fortune"></canvas>
+
+        <button class="btnSpin" id="btnSpin" disabled>Spin Wheel</button>
+
+        <div class="resultBox">
+          <div class="resultLabel">Congratulations</div>
+          <div class="resultValue" id="giftName">—</div>
         </div>
-        <button style="font-size:12px; background:none; box-shadow:none;" id="btnReset">Reset for Next User</button>
+
+        <button class="resetBtn" id="btnReset">Reset for Next User</button>
       </div>
     </section>
   </main>
 
-  <div class="modalBackdrop" id="modalBackdrop">
-    <div class="modalCard">
-      <div class="modalTitle" id="modalTitle">—</div>
+  <!-- Modal -->
+  <div class="modalBackdrop" id="modalBackdrop" role="dialog" aria-modal="true">
+    <div class="modal">
+      <div class="modalHead" id="modalTitle">Result</div>
       <div class="modalBody" id="modalBody">—</div>
-      <button class="modalOk" id="btnModalOk">OK</button>
+      <div class="modalFoot">
+        <button class="modalBtn" id="btnModalOk">OK</button>
+      </div>
     </div>
   </div>
 
-<script>
-const QUESTIONS = [
-  { text: "Income funds focus mainly on growth stocks.", correctYes: false },
-  { text: "Maybank Income Flow-I is a retail Shariah-compliant fixed income fund.", correctYes: true },
-  { text: "The MAMG Gold Fund is a wholesale feeder fund.", correctYes: true },
-  { text: "Maybank Malaysia Value Fund is a retail equity fund.", correctYes: true },
-  { text: "Retail funds usually require lower minimum investments than wholesale funds.", correctYes: true },
-  { text: "Maybank Asset Management has over 30 years of experience.", correctYes: true },
-  { text: "Maybank Asset Management applies ESG principles in investing.", correctYes: true }
-];
+  <script>
+    // ===== Questions (T/F mapped to Yes/No) =====
+    const QUESTIONS = [
+      { text: "Income funds focus mainly on growth stocks.", answer: false },
+      { text: "Different currency classes of the same fund always give the same returns.", answer: false },
+      { text: "Maybank Income Flow-I is a retail Shariah-compliant fixed income fund.", answer: true },
+      { text: "The MAMG Gold Fund is a wholesale feeder fund.", answer: true },
+      { text: "Maybank Malaysia Value Fund is a retail equity fund.", answer: true },
+      { text: "Maybank Malaysia Sukuk Fund is a Shariah-compliant fund.", answer: true },
+      { text: "Maybank AsiaPac ex-Japan Equity-I Fund is a growth-type equity fund.", answer: true },
+      { text: "Changing a fund’s investment objective requires unit holder approval.", answer: true },
+      { text: "MAMG Systematic Asia Pacific Equity Absolute Return Fund is structured as a feeder fund.", answer: true },
+      { text: "Retail funds usually require lower minimum investments than wholesale funds.", answer: true },
+      { text: "Maybank Global Sustainable Equity-I Fund is a retail Shariah-compliant equity fund.", answer: true },
+      { text: "Wholesale funds are mainly for sophisticated or institutional investors.", answer: true },
+      { text: "MAMG Systematic Asia Pacific Equity Absolute Return Fund is a retail fund.", answer: false },
+      { text: "Maybank Global Sustainable Equity-I Fund is a Shariah-compliant wholesale fund.", answer: false },
+      { text: "Maybank Income Flow-I is a feeder fund.", answer: false },
+      { text: "Maybank Malaysia Sukuk Fund invests mainly in conventional corporate bonds.", answer: false },
+      { text: "All MAMG equity funds are Shariah-compliant.", answer: false },
+      { text: "Wholesale funds are suitable for all retail investors.", answer: false },
+      { text: "Maybank AsiaPac ex-Japan Equity-I Fund is a fixed income fund.", answer: false },
+      { text: "The MAMG Gold Fund is a retail fund.", answer: false },
+      { text: "Maybank AsiaPac ex-Japan Equity-I Fund invests in Asia Pacific equities including Japan.", answer: false },
+      { text: "A fund’s category does not affect its risk level.", answer: false },
+      { text: "Maybank Global Sustainable Technology Fund mainly invests in global technology-related equities.", answer: true },
+      { text: "The MAMG Gold Fund gains gold exposure through a target fund.", answer: true },
+      { text: "Wholesale funds require an Information Memorandum.", answer: true },
+      { text: "MAMG Global Dividend Fund is a feeder fund focused on global dividend-paying companies.", answer: true },
+      { text: "Information Technology is a key sector in Maybank Global Sustainable Technology Fund.", answer: true },
+      { text: "Maybank Malaysia Value Fund mainly invests in Malaysian companies.", answer: true },
+      { text: "Maybank Global Technology-I Fund invests in Shariah-compliant technology companies.", answer: true },
+      { text: "Sustainable funds consider ESG factors when selecting investments.", answer: true },
+      { text: "Dividend funds focus on companies that pay regular dividends.", answer: true },
+      { text: "Thematic funds focus on specific sectors or themes.", answer: true },
+      { text: "Maybank Malaysia Sukuk Fund focuses on capital growth from global equities.", answer: false },
+      { text: "Maybank Malaysia Value Fund focuses on growth investing rather than value investing.", answer: false },
+      { text: "The MAMG Gold Fund holds physical gold bars in Malaysia.", answer: false },
+      { text: "Maybank Global Sustainable Technology Fund mainly invests in fixed income securities.", answer: false },
+      { text: "MAMG Global Dividend Fund invests only in Malaysian companies.", answer: false },
+      { text: "Thematic funds have no sector concentration risk.", answer: false },
+      { text: "Sustainable investing removes market risk.", answer: false },
+      { text: "“Sustainable Equity” is the main theme of Maybank Global Technology-I Fund.", answer: false },
+      { text: "Maybank Asset Management have over 30 years of experiences.", answer: true },
+      { text: "Maybank Asset Management is based only in Singapore.", answer: false },
+      { text: "Maybank Asset Management applies ESG principles in investing.", answer: true },
+      { text: "Maybank Asset Management only manages conventional funds.", answer: false },
+      { text: "Maybank Asset Management funds are available on FSMOne.", answer: true },
+    ];
 
-const GIFTS = [
-  { name: "RM5 Voucher", color: "#fef3c7" },
-  { name: "RM10 Voucher", color: "#ddd6fe" },
-  { name: "Mystery Gift", color: "#fce7f3" },
-  { name: "Coffee Treat", color: "#cffafe" },
-  { name: "Sticker Pack", color: "#d1fae5" },
-  { name: "Keychain", color: "#fee2e2" },
-  { name: "Grand Prize Entry", color: "#FFC629" }
-];
+    // ===== Gifts (wheel slices) =====
+    const GIFTS = [
+      { name: "Grand Prize Entry", color: "#FDE68A" },
+      { name: "RM5 Voucher",       color: "#FEF3C7" },
+      { name: "RM10 Voucher",      color: "#E9D5FF" },
+      { name: "Mystery Gift",      color: "#FCE7F3" },
+      { name: "Coffee Treat",      color: "#DBEAFE" },
+      { name: "Cute Sticker Pack", color: "#DCFCE7" },
+      { name: "Keychain",          color: "#FFE4E6" },
+    ];
 
-const el = (id) => document.getElementById(id);
-const ui = {
-  questionText: el("questionText"),
-  qCounter: el("qCounter"),
-  btnPick: el("btnPick"),
-  btnYes: el("btnYes"),
-  btnNo: el("btnNo"),
-  wheel: el("wheel"),
-  btnSpin: el("btnSpin"),
-  giftName: el("giftName"),
-  btnReset: el("btnReset"),
-  modalBackdrop: el("modalBackdrop"),
-  modalTitle: el("modalTitle"),
-  modalBody: el("modalBody"),
-  btnModalOk: el("btnModalOk")
-};
+    const el = (id) => document.getElementById(id);
 
-function scrollToWheel(){
-  document.getElementById("wheel").scrollIntoView({ behavior: "smooth", block: "center" });
-}
+    const ui = {
+      questionText: el("questionText"),
+      qCounter: el("qCounter"),
+      btnPick: el("btnPick"),
+      btnYes: el("btnYes"),
+      btnNo: el("btnNo"),
+      wheel: el("wheel"),
+      btnSpin: el("btnSpin"),
+      giftName: el("giftName"),
+      btnReset: el("btnReset"),
+      modalBackdrop: el("modalBackdrop"),
+      modalTitle: el("modalTitle"),
+      modalBody: el("modalBody"),
+      btnModalOk: el("btnModalOk"),
+    };
 
-function scrollToQuestion(){
-  document.getElementById("questionText").scrollIntoView({ behavior: "smooth", block: "center" });
-}
+    // Center logo for wheel (upload maybank-mark.png next to index.html)
+    const centerLogo = new Image();
+    centerLogo.src = "maybank-mark.png";
+    centerLogo.onload = () => drawWheel(currentRot || 0);
 
-const ctx = ui.wheel.getContext("2d");
-let state = { currentQuestion: null, answered: false, wheelEnabled: false, spinning: false, rotation: 0 };
+    const ctx = ui.wheel.getContext("2d");
 
-function drawWheel(rotationRad) {
-  const w = ui.wheel.width, h = ui.wheel.height;
-  const cx = w/2, cy = h/2, radius = 350;
-  ctx.clearRect(0, 0, w, h);
-  ctx.save();
-  ctx.translate(cx, cy);
-  ctx.rotate(rotationRad);
-  const n = GIFTS.length;
-  const slice = (Math.PI * 2) / n;
-  for (let i = 0; i < n; i++) {
-    ctx.beginPath();
-    ctx.moveTo(0, 0);
-    ctx.arc(0, 0, radius, i * slice, (i + 1) * slice);
-    ctx.fillStyle = GIFTS[i].color;
-    ctx.fill();
-    ctx.stroke();
-    ctx.save();
-    ctx.rotate(i * slice + slice / 2);
-    ctx.textAlign = "right";
-    ctx.fillStyle = "#000";
-    ctx.font = "bold 24px Arial";
-    ctx.fillText(GIFTS[i].name, radius - 20, 10);
-    ctx.restore();
-  }
-  ctx.restore();
-}
+    // No-repeat pool
+    let remaining = [];
+    let current = null;
+    let answered = false;
+    let qIndex = 0;
 
-function showModal(title, body) {
-  ui.modalTitle.textContent = title;
-  ui.modalBody.textContent = body;
-  ui.modalBackdrop.classList.add("show");
-}
+    // Wheel state
+    let currentRot = 0;
+    let spinning = false;
 
-ui.btnPick.onclick = () => {
-  state.currentQuestion = QUESTIONS[Math.floor(Math.random() * QUESTIONS.length)];
-  ui.questionText.textContent = state.currentQuestion.text;
-  ui.btnYes.disabled = false;
-  ui.btnNo.disabled = false;
-  ui.btnPick.disabled = true;
-};
-
-function handleAnswer(isYes) {
-  const correct = isYes === state.currentQuestion.correctYes;
-  ui.btnYes.disabled = ui.btnNo.disabled = true;
-  ui.btnSpin.disabled = false;
-  setTimeout(scrollToWheel, 150);
-  state.wheelEnabled = true;
-  correct ? showModal("Correct! 🎉", "Now spin the wheel!") : showModal("Oops! 😊", "Don't worry, you can still spin!");
-}
-
-ui.btnYes.onclick = () => handleAnswer(true);
-ui.btnNo.onclick = () => handleAnswer(false);
-
-ui.btnSpin.onclick = () => {
-  if (!state.wheelEnabled || state.spinning) return;
-  state.spinning = true;
-  ui.btnSpin.disabled = true;
-  const extraSpins = 5 + Math.random() * 5;
-  const targetRotation = state.rotation + (extraSpins * Math.PI * 2);
-  const duration = 4000;
-  const start = performance.now();
-
-  function animate(now) {
-    const elapsed = now - start;
-    const progress = Math.min(elapsed / duration, 1);
-    const ease = 1 - Math.pow(1 - progress, 3);
-    const current = state.rotation + (targetRotation - state.rotation) * ease;
-    drawWheel(current);
-    if (progress < 1) {
-      requestAnimationFrame(animate);
-    } else {
-      state.rotation = current % (Math.PI * 2);
-      state.spinning = false;
-      const slice = (Math.PI * 2) / GIFTS.length;
-      const normalized = (Math.PI * 1.5 - state.rotation) % (Math.PI * 2);
-      const idx = Math.floor((normalized < 0 ? normalized + Math.PI * 2 : normalized) / slice);
-      ui.giftName.textContent = GIFTS[idx].name;
-      showModal("Winner!", `You won ${GIFTS[idx].name}!`);
+    function initPool(){
+      remaining = [...QUESTIONS.keys()];
+      qIndex = 0;
+      ui.qCounter.textContent = `Q 0/${QUESTIONS.length}`;
     }
-  }
-  requestAnimationFrame(animate);
-};
 
-ui.btnReset.onclick = () => {
-  location.reload();
-  setTimeout(scrollToQuestion, 150);
-};
-ui.btnModalOk.onclick = () => ui.modalBackdrop.classList.remove("show");
+    function pickRandomQuestionNoRepeat(){
+      if(remaining.length === 0){
+        initPool(); // restart when exhausted
+      }
+      const r = Math.floor(Math.random() * remaining.length);
+      const idx = remaining.splice(r,1)[0];
+      current = QUESTIONS[idx];
+      qIndex += 1;
+      ui.qCounter.textContent = `Q ${qIndex}/${QUESTIONS.length}`;
+      answered = false;
 
-drawWheel(0);
-</script>
+      ui.questionText.textContent = current.text;
+      ui.btnYes.disabled = false;
+      ui.btnNo.disabled = false;
+      ui.btnPick.disabled = true;
+      ui.btnSpin.disabled = true;
+      ui.giftName.textContent = "—";
+    }
+
+    function showModal(title, body){
+      ui.modalTitle.textContent = title;
+      ui.modalBody.textContent = body;
+      ui.modalBackdrop.style.display = "flex";
+    }
+    function hideModal(){
+      ui.modalBackdrop.style.display = "none";
+    }
+
+    function scrollToWheel(){
+      document.getElementById("wheelCard").scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+    function scrollToQuestion(){
+      document.getElementById("questionCard").scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    function handleAnswer(userSaysTrue){
+      if(!current || answered) return;
+      answered = true;
+
+      const correct = (userSaysTrue === current.answer);
+      if(correct){
+        showModal("Correct", "Nice! You can proceed to the wheel to reveal the gift.");
+      }else{
+        showModal("Wrong", "No problem. You can still proceed to the wheel to reveal the gift.");
+      }
+
+      ui.btnYes.disabled = true;
+      ui.btnNo.disabled = true;
+
+      ui.btnSpin.disabled = false;
+
+      // kiosk/mobile friendly
+      setTimeout(scrollToWheel, 180);
+    }
+
+    function drawWheel(rotationRad) {
+      const w = ui.wheel.width, h = ui.wheel.height;
+      const cx = w/2, cy = h/2;
+      const radius = Math.min(cx, cy) - 18; 
+      ctx.clearRect(0, 0, w, h);
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.rotate(rotationRad);
+
+      const n = GIFTS.length;
+      const slice = (Math.PI * 2) / n;
+
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = "rgba(15,23,42,0.25)";
+
+      for (let i = 0; i < n; i++) {
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.arc(0, 0, radius, i * slice, (i + 1) * slice);
+        ctx.fillStyle = GIFTS[i].color;
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.save();
+        ctx.rotate(i * slice + slice / 2);
+        ctx.textAlign = "right";
+        ctx.fillStyle = "#0f172a";
+        ctx.font = "900 24px Arial";
+        ctx.fillText(GIFTS[i].name, radius - 20, 10);
+        ctx.restore();
+      }
+
+      // outer ring
+      ctx.beginPath();
+      ctx.arc(0,0,radius,0,Math.PI*2);
+      ctx.strokeStyle = "#0f172a";
+      ctx.lineWidth = 6;
+      ctx.stroke();
+
+      // --- Center logo (kept upright) ---
+      ctx.save();
+      ctx.rotate(-rotationRad);
+
+      const logoRadius = radius * 0.18;
+
+      // white circular base
+      ctx.beginPath();
+      ctx.arc(0, 0, logoRadius, 0, Math.PI * 2);
+      ctx.fillStyle = "#ffffff";
+      ctx.fill();
+      ctx.closePath();
+
+      // draw logo clipped into circle
+      if (centerLogo.complete && centerLogo.naturalWidth) {
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(0, 0, logoRadius, 0, Math.PI * 2);
+        ctx.clip();
+
+        ctx.drawImage(centerLogo, -logoRadius, -logoRadius, logoRadius * 2, logoRadius * 2);
+
+        ctx.restore();
+      }
+
+      // thin ring
+      ctx.beginPath();
+      ctx.arc(0, 0, logoRadius, 0, Math.PI * 2);
+      ctx.strokeStyle = "rgba(17,24,39,0.25)";
+      ctx.lineWidth = 3;
+      ctx.stroke();
+
+      ctx.restore(); // end upright layer
+      ctx.restore(); // end rotation layer
+    }
+
+    function spinWheel(){
+      if(spinning) return;
+      if(ui.btnSpin.disabled) return;
+      spinning = true;
+      ui.btnSpin.disabled = true;
+
+      const n = GIFTS.length;
+      const slice = (Math.PI * 2) / n;
+
+      const winningIndex = Math.floor(Math.random() * n);
+      const targetAngle = (Math.PI * 2) - (winningIndex * slice + slice / 2);
+
+      const extraSpins = 6 * Math.PI * 2;
+      const start = currentRot;
+      const end = extraSpins + targetAngle;
+
+      const duration = 3200;
+      const t0 = performance.now();
+
+      function easeOutCubic(t){ return 1 - Math.pow(1 - t, 3); }
+
+      function anim(now){
+        const t = Math.min(1, (now - t0) / duration);
+        const eased = easeOutCubic(t);
+        currentRot = start + (end - start) * eased;
+        drawWheel(currentRot);
+
+        if(t < 1){
+          requestAnimationFrame(anim);
+        }else{
+          spinning = false;
+          const gift = GIFTS[winningIndex];
+          ui.giftName.textContent = gift.name;
+          ui.btnPick.disabled = false;
+        }
+      }
+      requestAnimationFrame(anim);
+    }
+
+    // Wiring
+    ui.btnPick.addEventListener("click", () => pickRandomQuestionNoRepeat());
+    ui.btnYes.addEventListener("click", () => handleAnswer(true));
+    ui.btnNo.addEventListener("click", () => handleAnswer(false));
+    ui.btnSpin.addEventListener("click", spinWheel);
+
+    ui.btnReset.addEventListener("click", () => {
+      // scroll back then reset
+      scrollToQuestion();
+      setTimeout(() => location.reload(), 180);
+    });
+
+    ui.btnModalOk.addEventListener("click", hideModal);
+    ui.modalBackdrop.addEventListener("click", (e) => { if(e.target === ui.modalBackdrop) hideModal(); });
+
+    // Init
+    initPool();
+    drawWheel(0);
+  </script>
 </body>
 </html>
