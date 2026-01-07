@@ -3,286 +3,727 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Maybank AM Giveaway</title>
+  <title>Giveaway Randomizer</title>
+
   <style>
     :root{
-      --bg: #fafaf9;
-      --card: #ffffff;
-      --ink: #0f172a;
-      --muted: #64748b;
+      --maybank:#F5C84C;
+      --maybank-dark:#E1B433;
+
+      --bg:#f4f5f7;
+      --card:#ffffff;
+      --ink:#0f172a;
+      --muted:#667085;
+
+      --shadow: 0 22px 60px rgba(0,0,0,0.08);
       --border: rgba(15,23,42,0.08);
-      --shadow: 0 20px 50px rgba(15,23,42,0.08);
-      --maybank: #FFC629;
-      --maybank-dark: #E6B424;
-      --accent: #0f172a;
-      --yes: #10b981;
-      --no: #ef4444;
-      --btn: #f8fafc;
-      --btnHover:#f1f5f9;
+
+      --yes:#BFE7D1;
+      --no:#F1BABA;
+      --pick:#F6CB53;
+
+      --darkPanel:#1F2A3A;
+      --darkPanel2:#263447;
+
+      --btnText:#111827;
     }
-    *{ box-sizing:border-box; margin:0; padding:0; }
+
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+
+    /* Kiosk-friendly: avoid accidental highlight/drag */
     body{
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: linear-gradient(180deg, #fafaf9 0%, #f5f5f4 100%);
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      background: linear-gradient(180deg, #f7f7f8, var(--bg));
       color: var(--ink);
-      min-height:100vh;
-      line-height: 1.6;
+
+      -webkit-user-select: none;
+      user-select: none;
+      -webkit-touch-callout: none;
     }
-    .header{
+    button{ -webkit-user-select:auto; user-select:auto; }
+
+    /* Header */
+    header{
       background: var(--maybank);
       border-bottom: 2px solid var(--maybank-dark);
-      box-shadow: 0 4px 20px rgba(255,198,41,0.15);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+      position: sticky;
+      top: 0;
+      z-index: 10;
     }
     .headerInner{
-      width:min(1200px, 100%);
-      margin:0 auto;
-      padding: 20px 24px;
+      width: min(1200px, 100%);
+      margin: 0 auto;
+      padding: 14px 18px;
       display:flex;
       align-items:center;
-      gap:20px;
+      gap: 16px;
     }
-    .logo{ height: 56px; width: auto; display:block; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1)); }
-    .headerTitle{ font-weight: 800; font-size: 28px; letter-spacing: -0.5px; line-height: 1.2; color: var(--accent); }
-    .headerTitle small{ display:block; font-weight:600; font-size: 14px; margin-top: 4px; opacity:0.75; }
-    .wrap{
-      width:min(1200px, 100%);
-      margin: 32px auto 48px auto;
-      padding: 0 24px;
+    .logo{
+      height: 42px;
+      width:auto;
+      display:block;
+    }
+
+    /* Layout */
+    main{
+      width: min(1200px, 100%);
+      margin: 28px auto 44px auto;
+      padding: 0 18px;
       display:grid;
-      grid-template-columns: 1.3fr 1fr;
-      gap: 28px;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 26px;
       align-items:start;
     }
-    @media (max-width: 1000px){ .wrap{ grid-template-columns: 1fr; } .logo{ height: 48px; } }
+    @media (max-width: 980px){
+      main{ grid-template-columns: 1fr; }
+    }
+
     .card{
       background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 24px;
+      border-radius: 26px;
       box-shadow: var(--shadow);
-      padding: 32px;
-      transition: box-shadow 0.3s ease;
+      border: 1px solid rgba(0,0,0,0.04);
+      padding: 30px 28px;
     }
-    .title{ margin: 0 0 12px 0; font-size: 32px; font-weight: 800; letter-spacing: -0.8px; color: var(--accent); }
-    .sub{ margin: 0 0 24px 0; color: var(--muted); font-size: 15px; }
+
+    h2{
+      margin: 0 0 10px 0;
+      font-size: 40px;
+      letter-spacing: -0.6px;
+    }
+    .sub{
+      margin: 0 0 22px 0;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    /* Question panel */
     .qPanel{
-      background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-      border: 2px solid rgba(15,23,42,0.3);
-      border-radius: 20px;
-      padding: 24px 28px;
-      min-height: 240px;
+      background: linear-gradient(180deg, var(--darkPanel2), var(--darkPanel));
+      border-radius: 22px;
+      padding: 22px 22px;
+      border: 2px solid rgba(255,255,255,0.08);
+      box-shadow: inset 0 0 0 1px rgba(0,0,0,0.18);
+      min-height: 220px;
+      margin-bottom: 22px;
+    }
+
+    .qTop{
+      display:flex;
+      align-items:center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .qLabel{
+      color: rgba(255,255,255,0.68);
+      font-weight: 800;
+      font-size: 14px;
+    }
+
+    .qCounter{
+      font-size: 12px;
+      font-weight: 900;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.12);
+      color: rgba(255,255,255,0.92);
+      border: 1px solid rgba(255,255,255,0.16);
+      white-space: nowrap;
+    }
+
+    .qText{
+      margin: 0;
+      color: rgba(255,255,255,0.95);
+      font-size: 26px;
+      font-weight: 800;
+      line-height: 1.25;
+      letter-spacing: -0.2px;
+    }
+    @media (max-width: 560px){
+      .qText{ font-size: 22px; }
+    }
+
+    /* Buttons */
+    .btnRow{
+      display:grid;
+      grid-template-columns: 1.4fr 1fr 1fr;
+      gap: 18px;
+    }
+    @media (max-width: 680px){
+      .btnRow{ grid-template-columns: 1fr; }
+    }
+
+    button{
+      border: none;
+      border-radius: 16px;
+      padding: 18px 18px;
+      font-size: 18px;
+      font-weight: 900;
+      cursor:pointer;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.10);
+      transition: 130ms ease;
+    }
+    button:disabled{
+      opacity: 0.45;
+      cursor:not-allowed;
+      box-shadow:none;
+    }
+    button:active{ transform: translateY(1px); }
+
+    .btnPick{ background: var(--pick); color: var(--btnText); }
+    .btnYes{ background: var(--yes); color: #ffffff; }
+    .btnNo{ background: var(--no); color: #ffffff; }
+
+    /* Feedback line */
+    .feedback{
+      margin-top: 14px;
+      font-weight: 800;
+      color: var(--muted);
+      min-height: 22px;
+    }
+
+    /* Wheel */
+    .wheelBox{
       display:flex;
       flex-direction: column;
-      justify-content:flex-start;
-      gap: 12px;
+      align-items:center;
+      gap: 16px;
     }
-    .qLabel{ font-size: 12px; color: rgba(255,255,255,0.6); font-weight: 600; text-transform: capitalize; }
-    .qText{ margin:0; font-size: 24px; color: #ffffff; }
-    .btnRow{ display:grid; grid-template-columns: 1.5fr 1fr 1fr; gap: 16px; margin-top: 24px; }
-    @media (max-width: 680px){ .btnRow{ grid-template-columns: 1fr; } }
-    button{
-      appearance:none; border: 2px solid transparent; background: var(--btn); color: var(--ink);
-      padding: 18px 24px; border-radius: 14px; cursor:pointer; font-weight: 700; font-size: 17px;
-      transition: all 0.2s ease; font-family: inherit;
-    }
-    button:hover{ transform: translateY(-2px); box-shadow: 0 8px 20px rgba(15,23,42,0.12); }
-    button:disabled{ opacity: 0.4; cursor:not-allowed; transform:none; }
-    .btnPick{ background: var(--maybank); color: var(--accent); font-weight: 800; }
-    .btnYes{ background: var(--yes); color: #fff; }
-    .btnNo{ background: var(--no); color: #fff; }
-    .wheelWrap{ display:flex; flex-direction: column; align-items: center; gap: 20px; }
     .pointer{
-      width: 0; height: 0; border-left: 18px solid transparent; border-right: 18px solid transparent;
-      border-top: 28px solid var(--accent); z-index: 10; margin-bottom: -15px;
+      width:0; height:0;
+      border-left: 16px solid transparent;
+      border-right: 16px solid transparent;
+      border-top: 24px solid #111827; /* points down into the wheel */
+      margin-bottom: -8px;
     }
-    canvas{ width: 100%; max-width: 380px; aspect-ratio: 1 / 1; border-radius: 999px; border: 4px solid var(--accent); }
-    .spinBtn{ background: var(--accent); color: #fff; width: 100%; max-width: 280px; }
-    .giftResult{ width: 100%; max-width: 320px; border: 2px solid var(--border); background: #f8fafc; border-radius: 16px; padding: 20px; text-align:center; }
-    .giftLabel{ font-size: 12px; color: var(--muted); font-weight: 700; text-transform: uppercase; }
-    .giftName{ font-size: 24px; font-weight: 800; color: var(--accent); }
-    
-    /* Modal */
-    .modalBackdrop{ position: fixed; inset: 0; background: rgba(15,23,42,0.75); backdrop-filter: blur(4px); display:none; place-items:center; padding: 24px; z-index: 100; }
+    canvas{
+      width: 100%;
+      max-width: 420px;
+      aspect-ratio: 1 / 1;
+      border-radius: 999px;
+      border: 4px solid #111827;
+      background: #fff;
+    }
+    .spinBtn{
+      width: min(320px, 100%);
+      background: #9aa0a6;
+      color:#fff;
+      font-size: 20px;
+      border-radius: 18px;
+      padding: 16px 18px;
+    }
+    .spinBtn.enabled{
+      background: #8a8f96;
+    }
+
+    .resultBox{
+      width: min(340px, 100%);
+      border-radius: 18px;
+      border: 2px solid rgba(15,23,42,0.10);
+      padding: 18px;
+      text-align:center;
+      background: #f8fafc;
+    }
+    .resultLabel{
+      font-size: 13px;
+      font-weight: 900;
+      color: var(--muted);
+      letter-spacing: 0.6px;
+    }
+    .resultValue{
+      margin-top: 8px;
+      font-size: 24px;
+      font-weight: 1000;
+      color: #111827;
+    }
+
+    .resetLink{
+      margin-top: 10px;
+      background: transparent;
+      box-shadow:none;
+      color: #111827;
+      font-size: 14px;
+      font-weight: 800;
+      text-decoration: none;
+      padding: 8px 12px;
+    }
+
+    /* Modal (simple) */
+    .modalBackdrop{
+      position: fixed;
+      inset: 0;
+      display:none;
+      place-items:center;
+      background: rgba(17,24,39,0.60);
+      padding: 18px;
+      z-index: 50;
+    }
     .modalBackdrop.show{ display:grid; }
-    .modalCard{ width: min(500px, 100%); background: white; border-radius: 28px; padding: 40px; text-align:center; }
-    .modalTitle{ font-size: 32px; font-weight: 900; margin-bottom: 15px; }
-    .modalBody{ font-size: 18px; margin-bottom: 25px; }
-    .modalOk{ background: var(--accent); color: white; padding: 12px 40px; border-radius: 10px; }
+    .modal{
+      width: min(520px, 100%);
+      background: #fff;
+      border-radius: 26px;
+      padding: 26px 22px;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.25);
+      text-align:center;
+      border: 1px solid rgba(0,0,0,0.06);
+    }
+    .modalTitle{
+      margin:0 0 10px 0;
+      font-size: 26px;
+      font-weight: 1000;
+      letter-spacing: 0.4px;
+      color:#111827;
+    }
+    .modalBody{
+      margin:0 0 18px 0;
+      font-size: 16px;
+      font-weight: 800;
+      color:#374151;
+      line-height: 1.35;
+    }
+    .modalBtn{
+      background: #111827;
+      color:#fff;
+      border-radius: 14px;
+      padding: 12px 18px;
+      font-size: 16px;
+      font-weight: 950;
+      box-shadow:none;
+    }
   </style>
 </head>
-<body>
-  <header class="header">
-  <div class="headerInner">
-    <img 
-      src="maybank-logo.png" 
-      alt="Maybank Asset Management" 
-      class="logo"
-    />
-  </div>
-</header>
 
-  <main class="wrap">
-    <section class="card">
-      <h1 class="title">Question Randomizer</h1>
+<body>
+  <header>
+    <div class="headerInner">
+      <img class="logo" src="maybank-logo.png" alt="Maybank Asset Management">
+    </div>
+  </header>
+
+  <main>
+    <!-- LEFT: Question -->
+    <section class="card" id="questionSection">
+      <h2>Question Randomizer</h2>
       <p class="sub">Press <b>Yes</b> if the statement is TRUE. Press <b>No</b> if it is FALSE.</p>
+
       <div class="qPanel">
-        <div class="qLabel">Current Question</div>
+        <div class="qTop">
+          <div class="qLabel">Current Question</div>
+          <div class="qCounter" id="qCounter">Q —/45</div>
+        </div>
         <p class="qText" id="questionText">Click 'Pick Random Question' to start.</p>
       </div>
+
       <div class="btnRow">
-        <button class="btnPick" id="btnPick">Pick Random Question</button>
+        <button class="btnPick" id="btnPick">Pick Random<br/>Question</button>
         <button class="btnYes" id="btnYes" disabled>Yes</button>
         <button class="btnNo" id="btnNo" disabled>No</button>
       </div>
+
+      <div class="feedback" id="feedback"></div>
     </section>
 
-    <section class="card">
-      <div class="wheelWrap">
-        <div class="pointer"></div>
-        <canvas id="wheel" width="800" height="800"></canvas>
+    <!-- RIGHT: Wheel -->
+    <section class="card" id="wheelSection">
+      <div class="wheelBox">
+        <div class="pointer" aria-hidden="true"></div>
+        <canvas id="wheel" width="900" height="900"></canvas>
+
         <button class="spinBtn" id="btnSpin" disabled>Spin Wheel</button>
-        <div class="giftResult">
-          <p class="giftLabel">Gift Result</p>
-          <p class="giftName" id="giftName">—</p>
+
+        <div class="resultBox">
+          <div class="resultLabel">GIFT RESULT</div>
+          <div class="resultValue" id="giftResult">—</div>
         </div>
-        <button style="font-size:12px; background:none; box-shadow:none;" id="btnReset">Reset for Next User</button>
+
+        <button class="resetLink" id="btnReset">Reset for Next User</button>
       </div>
     </section>
   </main>
 
+  <!-- Modal -->
   <div class="modalBackdrop" id="modalBackdrop">
-    <div class="modalCard">
+    <div class="modal">
       <div class="modalTitle" id="modalTitle">—</div>
       <div class="modalBody" id="modalBody">—</div>
-      <button class="modalOk" id="btnModalOk">OK</button>
+      <button class="modalBtn" id="modalOk">OK</button>
     </div>
   </div>
 
 <script>
-const QUESTIONS = [
-  { text: "Income funds focus mainly on growth stocks.", correctYes: false },
-  { text: "Maybank Income Flow-I is a retail Shariah-compliant fixed income fund.", correctYes: true },
-  { text: "The MAMG Gold Fund is a wholesale feeder fund.", correctYes: true },
-  { text: "Maybank Malaysia Value Fund is a retail equity fund.", correctYes: true },
-  { text: "Retail funds usually require lower minimum investments than wholesale funds.", correctYes: true },
-  { text: "Maybank Asset Management has over 30 years of experience.", correctYes: true },
-  { text: "Maybank Asset Management applies ESG principles in investing.", correctYes: true }
-];
+  // =========================
+  // QUESTIONS (45)
+  // =========================
+  const QUESTIONS = [
+    { text:"Income funds focus mainly on growth stocks.", correctYes:false },
+    { text:"Different currency classes of the same fund always give the same returns.", correctYes:false },
+    { text:"Maybank Income Flow-I is a retail Shariah-compliant fixed income fund.", correctYes:true },
+    { text:"The MAMG Gold Fund is a wholesale feeder fund.", correctYes:true },
+    { text:"Maybank Malaysia Value Fund is a retail equity fund.", correctYes:true },
+    { text:"Maybank Malaysia Sukuk Fund is a Shariah-compliant fund.", correctYes:true },
+    { text:"Maybank AsiaPac ex-Japan Equity-I Fund is a growth-type equity fund.", correctYes:true },
+    { text:"Changing a fund’s investment objective requires unit holder approval.", correctYes:true },
+    { text:"MAMG Systematic Asia Pacific Equity Absolute Return Fund is structured as a feeder fund.", correctYes:true },
+    { text:"Retail funds usually require lower minimum investments than wholesale funds.", correctYes:true },
+    { text:"Maybank Global Sustainable Equity-I Fund is a retail Shariah-compliant equity fund.", correctYes:true },
+    { text:"Wholesale funds are mainly for sophisticated or institutional investors.", correctYes:true },
+    { text:"MAMG Systematic Asia Pacific Equity Absolute Return Fund is a retail fund.", correctYes:false },
+    { text:"Maybank Global Sustainable Equity-I Fund is a Shariah-compliant wholesale fund.", correctYes:false },
+    { text:"Maybank Income Flow-I is a feeder fund.", correctYes:false },
+    { text:"Maybank Malaysia Sukuk Fund invests mainly in conventional corporate bonds.", correctYes:false },
+    { text:"All MAMG equity funds are Shariah-compliant.", correctYes:false },
+    { text:"Wholesale funds are suitable for all retail investors.", correctYes:false },
+    { text:"Maybank AsiaPac ex-Japan Equity-I Fund is a fixed income fund.", correctYes:false },
+    { text:"The MAMG Gold Fund is a retail fund.", correctYes:false },
+    { text:"Maybank AsiaPac ex-Japan Equity-I Fund invests in Asia Pacific equities including Japan.", correctYes:false },
+    { text:"A fund’s category does not affect its risk level.", correctYes:false },
+    { text:"Maybank Global Sustainable Technology Fund mainly invests in global technology-related equities.", correctYes:true },
+    { text:"The MAMG Gold Fund gains gold exposure through a target fund.", correctYes:true },
+    { text:"Wholesale funds require an Information Memorandum.", correctYes:true },
+    { text:"MAMG Global Dividend Fund is a feeder fund focused on global dividend-paying companies.", correctYes:true },
+    { text:"Information Technology is a key sector in Maybank Global Sustainable Technology Fund.", correctYes:true },
+    { text:"Maybank Malaysia Value Fund mainly invests in Malaysian companies.", correctYes:true },
+    { text:"Maybank Global Technology-I Fund invests in Shariah-compliant technology companies.", correctYes:true },
+    { text:"Sustainable funds consider ESG factors when selecting investments.", correctYes:true },
+    { text:"Dividend funds focus on companies that pay regular dividends.", correctYes:true },
+    { text:"Thematic funds focus on specific sectors or themes.", correctYes:true },
+    { text:"Maybank Malaysia Sukuk Fund focuses on capital growth from global equities.", correctYes:false },
+    { text:"Maybank Malaysia Value Fund focuses on growth investing rather than value investing.", correctYes:false },
+    { text:"The MAMG Gold Fund holds physical gold bars in Malaysia.", correctYes:false },
+    { text:"Maybank Global Sustainable Technology Fund mainly invests in fixed income securities.", correctYes:false },
+    { text:"MAMG Global Dividend Fund invests only in Malaysian companies.", correctYes:false },
+    { text:"Thematic funds have no sector concentration risk.", correctYes:false },
+    { text:"Sustainable investing removes market risk.", correctYes:false },
+    { text:"“Sustainable Equity” is the main theme of Maybank Global Technology-I Fund.", correctYes:false },
+    { text:"Maybank Asset Management have over 30 years of experiences.", correctYes:true },
+    { text:"Maybank Asset Management is based only in Singapore.", correctYes:false },
+    { text:"Maybank Asset Management applies ESG principles in investing.", correctYes:true },
+    { text:"Maybank Asset Management only manages conventional funds.", correctYes:false },
+    { text:"Maybank Asset Management funds are available on FSMOne.", correctYes:true }
+  ];
 
-const GIFTS = [
-  { name: "RM5 Voucher", color: "#fef3c7" },
-  { name: "RM10 Voucher", color: "#ddd6fe" },
-  { name: "Mystery Gift", color: "#fce7f3" },
-  { name: "Coffee Treat", color: "#cffafe" },
-  { name: "Sticker Pack", color: "#d1fae5" },
-  { name: "Keychain", color: "#fee2e2" },
-  { name: "Grand Prize Entry", color: "#FFC629" }
-];
+  // Gifts (wheel)
+  const GIFTS = [
+    "Keychain",
+    "Grand Prize Entry",
+    "RM5 Voucher",
+    "RM10 Voucher",
+    "Mystery Gift",
+    "Coffee Treat",
+    "Sticker Pack"
+  ];
 
-const el = (id) => document.getElementById(id);
-const ui = {
-  questionText: el("questionText"),
-  btnPick: el("btnPick"),
-  btnYes: el("btnYes"),
-  btnNo: el("btnNo"),
-  wheel: el("wheel"),
-  btnSpin: el("btnSpin"),
-  giftName: el("giftName"),
-  btnReset: el("btnReset"),
-  modalBackdrop: el("modalBackdrop"),
-  modalTitle: el("modalTitle"),
-  modalBody: el("modalBody"),
-  btnModalOk: el("btnModalOk")
-};
+  // Pastel wheel colors (similar vibe to your screenshot)
+  const WHEEL_COLORS = [
+    "#F8E3E3",
+    "#F5CB53",
+    "#F8F0C8",
+    "#DCD9FF",
+    "#F3E3F0",
+    "#D8F2FF",
+    "#D7F7E6"
+  ];
 
-const ctx = ui.wheel.getContext("2d");
-let state = { currentQuestion: null, answered: false, wheelEnabled: false, spinning: false, rotation: 0 };
+  // =========================
+  // STATE (no-repeat queue)
+  // =========================
+  let questionQueue = [];
+  let questionsUsed = 0;
+  let currentQuestionIndex = null;
+  let answered = false;
+  let wheelEnabled = false;
+  let spinning = false;
+  let rotation = 0;
 
-function drawWheel(rotationRad) {
-  const w = ui.wheel.width, h = ui.wheel.height;
-  const cx = w/2, cy = h/2, radius = 350;
-  ctx.clearRect(0, 0, w, h);
-  ctx.save();
-  ctx.translate(cx, cy);
-  ctx.rotate(rotationRad);
-  const n = GIFTS.length;
-  const slice = (Math.PI * 2) / n;
-  for (let i = 0; i < n; i++) {
-    ctx.beginPath();
-    ctx.moveTo(0, 0);
-    ctx.arc(0, 0, radius, i * slice, (i + 1) * slice);
-    ctx.fillStyle = GIFTS[i].color;
-    ctx.fill();
-    ctx.stroke();
-    ctx.save();
-    ctx.rotate(i * slice + slice / 2);
-    ctx.textAlign = "right";
-    ctx.fillStyle = "#000";
-    ctx.font = "bold 24px Arial";
-    ctx.fillText(GIFTS[i].name, radius - 20, 10);
-    ctx.restore();
-  }
-  ctx.restore();
-}
+  const $ = (id) => document.getElementById(id);
 
-function showModal(title, body) {
-  ui.modalTitle.textContent = title;
-  ui.modalBody.textContent = body;
-  ui.modalBackdrop.classList.add("show");
-}
+  const questionText = $("questionText");
+  const qCounter = $("qCounter");
+  const feedback = $("feedback");
 
-ui.btnPick.onclick = () => {
-  state.currentQuestion = QUESTIONS[Math.floor(Math.random() * QUESTIONS.length)];
-  ui.questionText.textContent = state.currentQuestion.text;
-  ui.btnYes.disabled = false;
-  ui.btnNo.disabled = false;
-  ui.btnPick.disabled = true;
-};
+  const btnPick = $("btnPick");
+  const btnYes = $("btnYes");
+  const btnNo = $("btnNo");
+  const btnSpin = $("btnSpin");
+  const btnReset = $("btnReset");
 
-function handleAnswer(isYes) {
-  const correct = isYes === state.currentQuestion.correctYes;
-  ui.btnYes.disabled = ui.btnNo.disabled = true;
-  ui.btnSpin.disabled = false;
-  state.wheelEnabled = true;
-  correct ? showModal("Correct! 🎉", "Now spin the wheel!") : showModal("Oops! 😊", "Don't worry, you can still spin!");
-}
+  const giftResult = $("giftResult");
 
-ui.btnYes.onclick = () => handleAnswer(true);
-ui.btnNo.onclick = () => handleAnswer(false);
+  const modalBackdrop = $("modalBackdrop");
+  const modalTitle = $("modalTitle");
+  const modalBody = $("modalBody");
+  const modalOk = $("modalOk");
 
-ui.btnSpin.onclick = () => {
-  if (!state.wheelEnabled || state.spinning) return;
-  state.spinning = true;
-  ui.btnSpin.disabled = true;
-  const extraSpins = 5 + Math.random() * 5;
-  const targetRotation = state.rotation + (extraSpins * Math.PI * 2);
-  const duration = 4000;
-  const start = performance.now();
+  const wheelCanvas = $("wheel");
+  const ctx = wheelCanvas.getContext("2d");
 
-  function animate(now) {
-    const elapsed = now - start;
-    const progress = Math.min(elapsed / duration, 1);
-    const ease = 1 - Math.pow(1 - progress, 3);
-    const current = state.rotation + (targetRotation - state.rotation) * ease;
-    drawWheel(current);
-    if (progress < 1) {
-      requestAnimationFrame(animate);
-    } else {
-      state.rotation = current % (Math.PI * 2);
-      state.spinning = false;
-      const slice = (Math.PI * 2) / GIFTS.length;
-      const normalized = (Math.PI * 1.5 - state.rotation) % (Math.PI * 2);
-      const idx = Math.floor((normalized < 0 ? normalized + Math.PI * 2 : normalized) / slice);
-      ui.giftName.textContent = GIFTS[idx].name;
-      showModal("Winner!", `You won ${GIFTS[idx].name}!`);
+  function shuffleArray(arr){
+    for (let i = arr.length - 1; i > 0; i--){
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
     }
+    return arr;
   }
-  requestAnimationFrame(animate);
-};
 
-ui.btnReset.onclick = () => location.reload();
-ui.btnModalOk.onclick = () => ui.modalBackdrop.classList.remove("show");
+  function initQuestionQueue(){
+    questionQueue = shuffleArray([...Array(QUESTIONS.length).keys()]);
+    questionsUsed = 0;
+    updateQCounter();
+  }
 
-drawWheel(0);
+  function getNextQuestionIndex(){
+    if (questionQueue.length === 0) initQuestionQueue(); // exhausted -> reshuffle
+    questionsUsed++;
+    updateQCounter();
+    return questionQueue.pop();
+  }
+
+  function updateQCounter(){
+    const total = QUESTIONS.length;
+    qCounter.textContent = (questionsUsed === 0) ? `Q —/${total}` : `Q ${questionsUsed}/${total}`;
+  }
+
+  function showModal(title, body){
+    modalTitle.textContent = title;
+    modalBody.textContent = body;
+    modalBackdrop.classList.add("show");
+  }
+  function hideModal(){
+    modalBackdrop.classList.remove("show");
+  }
+
+  function setSpinEnabled(on){
+    wheelEnabled = on;
+    btnSpin.disabled = !on;
+    btnSpin.classList.toggle("enabled", on);
+  }
+
+  function scrollToWheel(){
+    $("wheelSection")?.scrollIntoView({ behavior:"smooth", block:"start" });
+  }
+  function scrollToQuestion(){
+    $("questionSection")?.scrollIntoView({ behavior:"smooth", block:"start" });
+  }
+
+  // =========================
+  // QUESTION FLOW
+  // =========================
+  function pickQuestion(){
+    currentQuestionIndex = getNextQuestionIndex();
+    const q = QUESTIONS[currentQuestionIndex];
+
+    questionText.textContent = q.text;
+    feedback.textContent = "";
+
+    answered = false;
+    btnYes.disabled = false;
+    btnNo.disabled = false;
+
+    setSpinEnabled(false);
+    giftResult.textContent = "—";
+  }
+
+  function answer(userYes){
+    if (currentQuestionIndex === null || answered) return;
+
+    answered = true;
+    btnYes.disabled = true;
+    btnNo.disabled = true;
+
+    const q = QUESTIONS[currentQuestionIndex];
+    const correct = (userYes === q.correctYes);
+
+    setSpinEnabled(true);
+
+    // feedback + modal
+    feedback.textContent = correct ? "Correct. You may now spin the wheel." : "Wrong. You may still spin the wheel.";
+    showModal(correct ? "CORRECT" : "WRONG", "You may now proceed to spin the wheel.");
+
+    // kiosk-friendly: auto-scroll to wheel for mobile users
+    scrollToWheel();
+  }
+
+  // Modal OK: close only (keep minimal)
+  modalOk.addEventListener("click", () => {
+    hideModal();
+  });
+  modalBackdrop.addEventListener("click", (e) => {
+    if (e.target === modalBackdrop) hideModal();
+  });
+
+  // =========================
+  // WHEEL DRAW + SPIN
+  // =========================
+  function drawWheel(rot){
+    const w = wheelCanvas.width;
+    const h = wheelCanvas.height;
+    const cx = w/2, cy = h/2;
+    const radius = Math.min(w,h) * 0.40;
+
+    ctx.clearRect(0,0,w,h);
+
+    ctx.save();
+    ctx.translate(cx,cy);
+    ctx.rotate(rot);
+
+    const n = GIFTS.length;
+    const slice = (Math.PI*2)/n;
+
+    for (let i=0;i<n;i++){
+      const start = i*slice;
+      const end = start + slice;
+
+      ctx.beginPath();
+      ctx.moveTo(0,0);
+      ctx.arc(0,0,radius,start,end);
+      ctx.closePath();
+      ctx.fillStyle = WHEEL_COLORS[i % WHEEL_COLORS.length];
+      ctx.fill();
+
+      ctx.strokeStyle = "rgba(17,24,39,0.35)";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      // label
+      ctx.save();
+      ctx.rotate(start + slice/2);
+      ctx.fillStyle = "#111827";
+      ctx.font = "900 28px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial";
+      ctx.textAlign = "right";
+      ctx.fillText(GIFTS[i], radius - 18, 10);
+      ctx.restore();
+    }
+
+    // center
+    ctx.beginPath();
+    ctx.arc(0,0,radius*0.16,0,Math.PI*2);
+    ctx.fillStyle = "rgba(255,255,255,0.55)";
+    ctx.fill();
+    ctx.strokeStyle = "rgba(17,24,39,0.40)";
+    ctx.lineWidth = 4;
+    ctx.stroke();
+
+    ctx.restore();
+
+    // outer ring subtle
+    ctx.beginPath();
+    ctx.arc(cx,cy,radius+2,0,Math.PI*2);
+    ctx.strokeStyle = "rgba(17,24,39,0.25)";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+  }
+
+  function angleToIndex(angleRad){
+    const n = GIFTS.length;
+    const slice = (Math.PI*2)/n;
+
+    // Normalize
+    let a = angleRad % (Math.PI*2);
+    if (a < 0) a += Math.PI*2;
+
+    // Pointer is at top (12 o'clock). Our wheel rotates.
+    // Convert so 12 o'clock corresponds to 0 index boundary.
+    const shifted = (a + Math.PI/2) % (Math.PI*2);
+    const idx = Math.floor((Math.PI*2 - shifted) / slice) % n;
+    return idx;
+  }
+
+  function easeOutCubic(t){ return 1 - Math.pow(1-t,3); }
+
+  function animateSpin(from,to,duration){
+    spinning = true;
+    btnSpin.disabled = true;
+
+    const start = performance.now();
+
+    function frame(now){
+      const t = Math.min(1, (now-start)/duration);
+      const eased = easeOutCubic(t);
+      const cur = from + (to-from)*eased;
+
+      rotation = cur;
+      drawWheel(rotation);
+
+      if (t < 1){
+        requestAnimationFrame(frame);
+      } else {
+        spinning = false;
+
+        const idx = angleToIndex(rotation);
+        const prize = GIFTS[idx];
+        giftResult.textContent = prize;
+
+        showModal("CONGRATULATIONS", `You won: ${prize}`);
+
+        // keep spin enabled for that participant? typically no, but we keep disabled until reset
+        btnSpin.disabled = true;
+      }
+    }
+    requestAnimationFrame(frame);
+  }
+
+  function spinWheel(){
+    if (!wheelEnabled || spinning) return;
+
+    const n = GIFTS.length;
+    const slice = (Math.PI*2)/n;
+    const targetIdx = Math.floor(Math.random()*n);
+
+    const targetCenter = (targetIdx + 0.5) * slice;
+    const desired = (-Math.PI/2) - targetCenter;
+
+    const extraSpins = 6 + Math.floor(Math.random()*3);
+    const final = desired - extraSpins*(Math.PI*2);
+
+    animateSpin(rotation, final, 4200);
+  }
+
+  // =========================
+  // RESET
+  // =========================
+  function resetAll(){
+    currentQuestionIndex = null;
+    answered = false;
+    wheelEnabled = false;
+    spinning = false;
+
+    questionText.textContent = "Click 'Pick Random Question' to start.";
+    feedback.textContent = "";
+
+    btnYes.disabled = true;
+    btnNo.disabled = true;
+
+    setSpinEnabled(false);
+
+    giftResult.textContent = "—";
+    rotation = 0;
+    drawWheel(rotation);
+
+    // kiosk-friendly: scroll back to question on mobile
+    scrollToQuestion();
+  }
+
+  // =========================
+  // EVENTS
+  // =========================
+  btnPick.addEventListener("click", pickQuestion);
+  btnYes.addEventListener("click", () => answer(true));
+  btnNo.addEventListener("click", () => answer(false));
+  btnSpin.addEventListener("click", spinWheel);
+  btnReset.addEventListener("click", resetAll);
+
+  // =========================
+  // INIT
+  // =========================
+  initQuestionQueue();
+  drawWheel(0);
+  resetAll();
 </script>
 </body>
 </html>
