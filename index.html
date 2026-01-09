@@ -65,33 +65,38 @@
     .title{ margin: 0 0 12px 0; font-size: 32px; font-weight: 800; letter-spacing: -0.8px; color: var(--accent); }
     .sub{ margin: 0 0 24px 0; color: var(--muted); font-size: 15px; }
     .qPanel{
-      background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-      border: 2px solid rgba(15,23,42,0.3);
-      border-radius: 20px;
-      padding: 24px 28px;
-      min-height: 240px;
-      display:flex;
-      flex-direction: column;
-      justify-content:flex-start;
-      gap: 12px;
-    }
+  border-radius: 20px;
+  overflow: hidden;
+  border: 2px solid rgba(15,23,42,0.15);
+  background: #ffffff;
+  min-height: 240px;
+  display:flex;
+  flex-direction: column;
+}
+/* Yellow header inside question box */
 .qTopRow{
+  background: var(--maybank);
+  border-bottom: 2px solid var(--maybank-dark);
+  padding: 14px 18px;
   display:flex;
   justify-content:space-between;
   align-items:center;
 }
 
-.qCounter{
-  font-size: 12px;
+.qLabel{
+  font-size: 15px;
   font-weight: 800;
-  padding: 6px 10px;
-  border-radius: 999px;
-  background: rgba(255,255,255,0.15);
-  border: 1px solid rgba(255,255,255,0.25);
-  color: rgba(255,255,255,0.9);
+  color: #111827;
 }
-    .qLabel{ font-size: 12px; color: rgba(255,255,255,0.6); font-weight: 600; text-transform: capitalize; }
-    .qText{ margin:0; font-size: 24px; color: #ffffff; }
+
+
+/* White body */
+.qText{
+  padding: 22px 24px;
+  font-size: 24px;
+  font-weight: 600;
+  color: #111827;   /* black text */
+}
     .btnRow{ display:grid; grid-template-columns: 1.5fr 1fr 1fr; gap: 16px; margin-top: 24px; }
     @media (max-width: 680px){ .btnRow{ grid-template-columns: 1fr; } }
     button{
@@ -142,7 +147,6 @@
       <div class="qPanel">
   <div class="qTopRow">
     <div class="qLabel">Current Question</div>
-    <div class="qCounter" id="qCounter">Q 0/45</div>
   </div>
   <p class="qText" id="questionText">Click 'Pick Random Question' to start.</p>
 </div>
@@ -177,29 +181,49 @@
 
 <script>
 const QUESTIONS = [
-  { text: "Income funds focus mainly on growth stocks.", correctYes: false },
-  { text: "Maybank Income Flow-I is a retail Shariah-compliant fixed income fund.", correctYes: true },
-  { text: "The MAMG Gold Fund is a wholesale feeder fund.", correctYes: true },
-  { text: "Maybank Malaysia Value Fund is a retail equity fund.", correctYes: true },
-  { text: "Retail funds usually require lower minimum investments than wholesale funds.", correctYes: true },
-  { text: "Maybank Asset Management has over 30 years of experience.", correctYes: true },
-  { text: "Maybank Asset Management applies ESG principles in investing.", correctYes: true }
+  { text: "The MAMG Gold Fund invests directly in physical gold.", correctYes: true },
+
+{ text: "The Maybank Malaysia Sukuk Fund currently targets an annual yield of around 4%.", correctYes: true },
+
+{ text: "The MAMG Systematic Asia Pacific Equity Absolute Return Fund aims to deliver absolute returns regardless of market conditions.", correctYes: true },
+
+{ text: "The Maybank Global Technology-I Fund provides exposure to global technology companies while remaining fully Shariah-compliant.", correctYes: true },
+
+{ text: "The Maybank Global Technology-I Fund offers diversified exposure across multiple technology sub-sectors.", correctYes: true },
+
+{ text: "The Maybank Malaysia Value Fund targets stocks trading significantly below intrinsic value with a medium-term investment horizon.", correctYes: true },
+
+{ text: "The Maybank AsiaPac ex-Japan Equity-I Fund provides equity exposure across key Asian markets such as India, China, South Korea, and Malaysia.", correctYes: true },
+
+{ text: "The MAMG Global Dividend Fund invests in the JPMorgan Investment Funds – Global Dividend Fund to pursue income generation and capital appreciation and pays out dividends quarterly.", correctYes: true },
+
+{ text: "The MAMG Gold Fund offers a MYR-hedged share class to help manage currency risk.", correctYes: true },
+
+{ text: "The MAMG Systematic Asia Pacific Equity Absolute Return Fund seeks to capture alpha through systematic investment strategies.", correctYes: true },
+
+{ text: "The Maybank Global Technology-I Fund has delivered a return of 14.5% since inception.", correctYes: true },
+
+{ text: "The MAMG Global Dividend Fund provides exposure to U.S. banking stocks that performed strongly in the previous year.", correctYes: true },
+
+{ text: "The MAMG Systematic Asia Pacific Equity Absolute Return Fund leverages BlackRock’s proprietary systematic platform to analyse and select from a universe of over 2,000 stocks.", correctYes: true },
+
+{ text: "The Maybank Malaysia Value Fund has exposure to sectors such as Industrials, Construction, and Information Technology.", correctYes: true },
+
+{ text: "The Maybank AsiaPac ex-Japan Equity-I Fund is ranked #1 among Islamic equity funds over a three-year period on the FSMOne platform.", correctYes: true },
 ];
 
 const GIFTS = [
-  { name: "RM5 Voucher", color: "#fef3c7" },
-  { name: "RM10 Voucher", color: "#ddd6fe" },
-  { name: "Mystery Gift", color: "#fce7f3" },
-  { name: "Coffee Treat", color: "#cffafe" },
-  { name: "Sticker Pack", color: "#d1fae5" },
-  { name: "Keychain", color: "#fee2e2" },
-  { name: "Grand Prize Entry", color: "#FFC629" }
+  { name: "Black Woven Bag", color: "#fef3c7" },
+  { name: "Pen", color: "#F5F5F1" },
+{ name: "Black Woven Bag", color: "#fef3c7" },
+  { name: "Pen", color: "#F5F5F1" },
+  { name: "Cable 3 in 1", color: "#FFF1B3" },
+  { name: "Jute Bag", color: "#FFC629" }
 ];
 
 const el = (id) => document.getElementById(id);
 const ui = {
   questionText: el("questionText"),
-  qCounter: el("qCounter"),
   btnPick: el("btnPick"),
   btnYes: el("btnYes"),
   btnNo: el("btnNo"),
@@ -222,32 +246,94 @@ function scrollToQuestion(){
 }
 
 const ctx = ui.wheel.getContext("2d");
+// Center logo (Maybank mark)
+const centerLogo = new Image();
+centerLogo.src = "maybank-mark.png";
+centerLogo.onload = () => drawWheel(state.rotation);
 let state = { currentQuestion: null, answered: false, wheelEnabled: false, spinning: false, rotation: 0 };
 
+function initWheelCanvas() {
+  // If you already have your own resize/fit function, call it here instead.
+  // This ensures the canvas has a real size before drawing.
+  const canvas = ui.wheel;
+
+  // If your HTML already sets width/height attributes, you can remove this block.
+  // Otherwise, this makes canvas match its CSS size.
+  const rect = canvas.getBoundingClientRect();
+  const dpr = window.devicePixelRatio || 1;
+
+  canvas.width  = Math.round(rect.width * dpr);
+  canvas.height = Math.round(rect.height * dpr);
+
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0); // so drawing uses CSS pixels
+
+  drawWheel(0); // ✅ draw immediately (logo appears too)
+}
+
 function drawWheel(rotationRad) {
-  const w = ui.wheel.width, h = ui.wheel.height;
-  const cx = w/2, cy = h/2, radius = 350;
+  const dpr = window.devicePixelRatio || 1;
+
+  // Because we setTransform(dpr,0,0,dpr,0,0), draw in CSS pixels:
+  const w = ui.wheel.width / dpr;
+  const h = ui.wheel.height / dpr;
+
+  const cx = w / 2;
+  const cy = h / 2;
+
+  // Auto-fit radius to canvas (fixes the “close up” issue)
+  const radius = Math.min(cx, cy) - 12;
+
   ctx.clearRect(0, 0, w, h);
+
   ctx.save();
   ctx.translate(cx, cy);
   ctx.rotate(rotationRad);
+
   const n = GIFTS.length;
   const slice = (Math.PI * 2) / n;
+
   for (let i = 0; i < n; i++) {
     ctx.beginPath();
     ctx.moveTo(0, 0);
     ctx.arc(0, 0, radius, i * slice, (i + 1) * slice);
     ctx.fillStyle = GIFTS[i].color;
     ctx.fill();
+    ctx.strokeStyle = "rgba(17,24,39,0.25)";
+    ctx.lineWidth = 2;
     ctx.stroke();
+
+    // Gift text
     ctx.save();
     ctx.rotate(i * slice + slice / 2);
     ctx.textAlign = "right";
     ctx.fillStyle = "#000";
-    ctx.font = "bold 24px Arial";
-    ctx.fillText(GIFTS[i].name, radius - 20, 10);
+    ctx.font = "bold 22px Arial";
+    ctx.fillText(GIFTS[i].name, radius - 18, 8);
     ctx.restore();
   }
+
+  // --- Center logo badge (always visible) ---
+  const badgeR = Math.max(28, radius * 0.12);
+
+  // White badge circle
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(0, 0, badgeR + 6, 0, Math.PI * 2);
+  ctx.fillStyle = "#ffffff";
+  ctx.fill();
+
+  // Outline
+  ctx.lineWidth = 2;
+  ctx.strokeStyle = "rgba(17,24,39,0.35)";
+  ctx.stroke();
+
+  // Draw logo (if loaded)
+  if (centerLogo.complete && centerLogo.naturalWidth > 0) {
+    ctx.drawImage(centerLogo, -badgeR, -badgeR, badgeR * 2, badgeR * 2);
+  }
+  ctx.restore();
+  // --- end center logo badge ---
+
   ctx.restore();
 }
 
@@ -283,7 +369,7 @@ ui.btnSpin.onclick = () => {
   ui.btnSpin.disabled = true;
   const extraSpins = 5 + Math.random() * 5;
   const targetRotation = state.rotation + (extraSpins * Math.PI * 2);
-  const duration = 4000;
+  const duration = 2000;
   const start = performance.now();
 
   function animate(now) {
@@ -313,7 +399,10 @@ ui.btnReset.onclick = () => {
 };
 ui.btnModalOk.onclick = () => ui.modalBackdrop.classList.remove("show");
 
-drawWheel(0);
+
+window.addEventListener("load", () => {
+  initWheelCanvas();
+});
 </script>
 </body>
 </html>
