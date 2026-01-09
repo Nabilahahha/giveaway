@@ -89,6 +89,16 @@
   color: #111827;
 }
 
+.qCounter{
+  font-size: 13px;
+  font-weight: 800;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: transparent;
+  border: none;
+  color: #111827;
+}
+
 
 /* White body */
 .qText{
@@ -115,7 +125,7 @@
       border-top: 28px solid var(--accent); z-index: 10; margin-bottom: -15px;
     }
     canvas{ width: 100%; max-width: 380px; aspect-ratio: 1 / 1; border-radius: 999px; border: 4px solid var(--accent); }
-    .spinBtn{ background: var(--accent); color: #fff; width: 100%; max-width: 280px; }
+    .spinBtn{ background: var(--accent); color: #FFC629; width: 100%; max-width: 280px; }
     .giftResult{ width: 100%; max-width: 320px; border: 2px solid var(--border); background: #f8fafc; border-radius: 16px; padding: 20px; text-align:center; }
     .giftLabel{ font-size: 12px; color: var(--muted); font-weight: 700; text-transform: uppercase; }
     .giftName{ font-size: 24px; font-weight: 800; color: var(--accent); }
@@ -147,6 +157,7 @@
       <div class="qPanel">
   <div class="qTopRow">
     <div class="qLabel">Current Question</div>
+    <div class="qCounter" id="qCounter">Q 0/15</div>
   </div>
   <p class="qText" id="questionText">Click 'Pick Random Question' to start.</p>
 </div>
@@ -307,7 +318,7 @@ function drawWheel(rotationRad) {
     ctx.rotate(i * slice + slice / 2);
     ctx.textAlign = "right";
     ctx.fillStyle = "#000";
-    ctx.font = "bold 22px Arial";
+    ctx.font = "bold 12px Arial";
     ctx.fillText(GIFTS[i].name, radius - 18, 8);
     ctx.restore();
   }
@@ -343,14 +354,40 @@ function showModal(title, body) {
   ui.modalBackdrop.classList.add("show");
 }
 
-ui.btnPick.onclick = () => {
-  state.currentQuestion = QUESTIONS[Math.floor(Math.random() * QUESTIONS.length)];
+let remaining = [];
+let qIndex = 0;
+
+function initPool(){
+  remaining = [...QUESTIONS.keys()];
+  qIndex = 0;
+  const qCounterEl = document.getElementById("qCounter");
+  if (qCounterEl) qCounterEl.textContent = `Q 0/${QUESTIONS.length}`;
+}
+
+function pickRandomQuestionNoRepeat(){
+  if (remaining.length === 0){
+    initPool();
+  }
+  const r = Math.floor(Math.random() * remaining.length);
+  const idx = remaining.splice(r,1)[0];
+
+  state.currentQuestion = QUESTIONS[idx];
+  qIndex += 1;
+
+  const qCounterEl = document.getElementById("qCounter");
+  if (qCounterEl) qCounterEl.textContent = `Q ${qIndex}/${QUESTIONS.length}`;
+
   ui.questionText.textContent = state.currentQuestion.text;
   ui.btnYes.disabled = false;
   ui.btnNo.disabled = false;
   ui.btnPick.disabled = true;
-};
+  ui.btnSpin.disabled = true;
+  state.wheelEnabled = false;
+}
 
+ui.btnPick.onclick = () => {
+  pickRandomQuestionNoRepeat();
+};
 function handleAnswer(isYes) {
   const correct = isYes === state.currentQuestion.correctYes;
   ui.btnYes.disabled = ui.btnNo.disabled = true;
@@ -369,7 +406,7 @@ ui.btnSpin.onclick = () => {
   ui.btnSpin.disabled = true;
   const extraSpins = 5 + Math.random() * 5;
   const targetRotation = state.rotation + (extraSpins * Math.PI * 2);
-  const duration = 2000;
+  const duration = 1000;
   const start = performance.now();
 
   function animate(now) {
@@ -388,13 +425,29 @@ ui.btnSpin.onclick = () => {
       const idx = Math.floor((normalized < 0 ? normalized + Math.PI * 2 : normalized) / slice);
       ui.giftName.textContent = GIFTS[idx].name;
       showModal("Winner!", `You won ${GIFTS[idx].name}!`);
+ui.btnPick.disabled = false;
     }
   }
   requestAnimationFrame(animate);
 };
 
 ui.btnReset.onclick = () => {
-  location.reload();
+  // reset question state
+  usedQuestions.clear();
+  currentQuestion = null;
+
+  ui.questionText.textContent = "Click 'Pick Random Question' to start.";
+  ui.btnPick.disabled = false;
+  ui.btnYes.disabled = true;
+  ui.btnNo.disabled = true;
+  ui.btnSpin.disabled = true;
+  ui.giftName.textContent = "—";
+
+  // reset wheel
+  currentRotation = 0;
+  drawWheel(0);
+
+  // scroll back to question (mobile-friendly)
   setTimeout(scrollToQuestion, 150);
 };
 ui.btnModalOk.onclick = () => ui.modalBackdrop.classList.remove("show");
@@ -402,6 +455,7 @@ ui.btnModalOk.onclick = () => ui.modalBackdrop.classList.remove("show");
 
 window.addEventListener("load", () => {
   initWheelCanvas();
+  initPool();
 });
 </script>
 </body>
